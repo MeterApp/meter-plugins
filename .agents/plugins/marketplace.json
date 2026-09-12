@@ -1,0 +1,14 @@
+{
+  "name": "meterapp",
+  "interface": {
+    "displayName": "Meter Plugins"
+  },
+  "plugins": [
+    {
+      "name": "meter",
+      "source": { "source": "local", "path": "./" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}

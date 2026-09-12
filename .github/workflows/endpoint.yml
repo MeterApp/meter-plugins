@@ -1,0 +1,58 @@
+name: Endpoint reachable
+
+# The manifests hard-code one hosted MCP URL. If it moves or breaks, every
+# install silently stops working, so check it on a schedule rather than waiting
+# for a bug report.
+on:
+  schedule:
+    - cron: "41 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mcp:
+    name: MCP endpoint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: The URL in .mcp.json answers with the OAuth challenge
+        run: |
+          url="$(node -p "require('./.mcp.json').mcpServers['meter'].url")"
+          echo "checking $url"
+          # No token here, so 401 is the healthy answer: the server is up and
+          # demanding authentication. Hosts find the sign-in through the
+          # resource_metadata pointer in WWW-Authenticate, so its absence is
+          # an outage for every OAuth client even if the status is right.
+          headers="$(mktemp)"
+          status="$(curl -sS -o /dev/null -D "$headers" -w '%{http_code}' -X POST "$url" \
+            -H 'Content-Type: application/json' \
+            -H 'Accept: application/json, text/event-stream' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' || echo 000)"
+          echo "status $status"
+          case "$status" in
+            401)
+              grep -i '^www-authenticate:.*resource_metadata=' "$headers" \
+                || { echo "401 without a resource_metadata challenge" >&2; cat "$headers" >&2; exit 1; }
+              echo "endpoint is up and advertises OAuth discovery, as expected" ;;
+            *) echo "unexpected status $status" >&2; cat "$headers" >&2; exit 1 ;;
+          esac
+
+      - name: The protected-resource metadata parses
+        run: |
+          origin="$(node -p "new URL(require('./.mcp.json').mcpServers['meter'].url).origin")"
+          curl -sSf "$origin/.well-known/oauth-protected-resource" \
+            | node -e '
+              let raw = "";
+              process.stdin.on("data", (chunk) => (raw += chunk));
+              process.stdin.on("end", () => {
+                const doc = JSON.parse(raw);
+                if (!Array.isArray(doc.authorization_servers) || doc.authorization_servers.length === 0) {
+                  console.error("no authorization_servers in", doc);
+                  process.exit(1);
+                }
+                console.log("authorization server:", doc.authorization_servers[0]);
+              });'

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Meter">
+  <rect width="64" height="64" rx="14" fill="#106A57"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 40a20 20 0 0 1 40 0"/>
+    <path d="M32 40 43 27"/>
+    <path d="M17 40h3M44 40h3M20.5 29.5l2.1 2.1M43.5 29.5l-2.1 2.1M32 24v3"/>
+  </g>
+  <circle cx="32" cy="40" r="3" fill="#FFFFFF"/>
+</svg>

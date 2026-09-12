@@ -1,0 +1,13 @@
+interface:
+  display_name: "Meter Fleet Onboarding"
+  short_description: "Walk a new fleet owner through setup, step by step"
+  default_prompt: "Use $meter-fleet-onboarding to help me finish setting up my fleet on Meter."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "meter"
+      description: "Meter hosted MCP server (OAuth sign-in)"
+      transport: "streamable_http"
+      url: "https://www.meterapp.co/api/mcp"
+policy:
+  allow_implicit_invocation: true

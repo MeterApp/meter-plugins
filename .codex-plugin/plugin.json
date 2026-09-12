@@ -1,0 +1,46 @@
+{
+  "name": "meter",
+  "version": "1.1.0",
+  "description": "Meter, the taxi meter and fleet platform, for AI agents. Ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting, guide onboarding, and change settings with a dry run and confirmation. Hosted MCP server with OAuth sign-in.",
+  "author": {
+    "name": "Meter",
+    "email": "hello@meterapp.co",
+    "url": "https://www.meterapp.co"
+  },
+  "homepage": "https://www.meterapp.co/docs/plugins",
+  "repository": "https://github.com/MeterApp/meter-plugins",
+  "license": "MIT",
+  "keywords": [
+    "meter",
+    "taxi",
+    "fleet",
+    "dispatch",
+    "bookings",
+    "earnings",
+    "mcp",
+    "oauth"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Meter",
+    "shortDescription": "Your taxi fleet's data and settings, in your agent",
+    "longDescription": "Meter is the taxi meter and fleet platform: drivers run a meter in the Meter app, fleets manage drivers, vehicles, fares, scheduled bookings and money, and riders book rides. This plugin connects your agent to the hosted Meter MCP server with your own Meter sign-in, so it sees exactly what you see: your fleets, trips, bookings, drivers, vehicles, earnings and accounting. Five skills teach it to answer fleet questions, walk a new fleet through onboarding, change settings only after a dry run and your confirmation, help drivers with their own trips and pay stubs, and explain how the API works.",
+    "developerName": "Meter",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.meterapp.co",
+    "defaultPrompt": [
+      "How much did my fleet earn last week, and which driver had the most trips?",
+      "Which bookings are still unassigned for tomorrow morning?",
+      "Show me what my pay stub for August looks like."
+    ],
+    "brandColor": "#106A57",
+    "composerIcon": "./assets/logo.svg",
+    "logo": "./assets/logo.svg",
+    "supportURL": "https://www.meterapp.co/docs/plugins"
+  }
+}

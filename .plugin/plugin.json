@@ -1,0 +1,23 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "meter",
+  "version": "1.1.0",
+  "description": "Meter, the taxi meter and fleet platform, for AI agents. Ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting, guide onboarding, and change settings with a dry run and confirmation. Hosted MCP server with OAuth sign-in.",
+  "author": {
+    "name": "Meter",
+    "email": "hello@meterapp.co",
+    "url": "https://www.meterapp.co"
+  },
+  "homepage": "https://www.meterapp.co/docs/plugins",
+  "repository": "https://github.com/MeterApp/meter-plugins",
+  "license": "MIT",
+  "keywords": ["meter", "taxi", "fleet", "dispatch", "bookings", "earnings", "mcp", "oauth"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Meter",
+        "category": "Productivity"
+      }
+    }
+  }
+}

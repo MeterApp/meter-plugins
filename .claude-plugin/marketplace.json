@@ -1,0 +1,18 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "meterapp",
+  "owner": {
+    "name": "Meter",
+    "email": "hello@meterapp.co",
+    "url": "https://www.meterapp.co"
+  },
+  "description": "Plugins by Meter. Meter: the taxi meter and fleet platform, for AI agents. Fleet insights, onboarding, safe settings changes and driver self-service over the hosted MCP server.",
+  "plugins": [
+    {
+      "name": "meter",
+      "source": "./",
+      "description": "Give your agent the signed-in person's view of Meter: fleets, trips, bookings, drivers, vehicles, earnings and accounting, plus confirmable settings changes. Five skills plus the hosted MCP server with OAuth sign-in; no API keys.",
+      "category": "productivity"
+    }
+  ]
+}

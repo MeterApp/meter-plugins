@@ -1,0 +1,6 @@
+interface:
+  display_name: "Meter API Explainer"
+  short_description: "How the Meter agent API works and what its data means"
+  default_prompt: "Use $meter-api-explainer to explain how the Meter MCP API works or what a field means."
+policy:
+  allow_implicit_invocation: true
