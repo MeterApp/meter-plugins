@@ -1,6 +1,6 @@
 ---
 name: meter-driver-personal
-description: Help an individual Meter driver or rider with their own data through the Meter MCP tools: their trips (list_trips driver "me"), bookings (list_bookings scope "driver" or "rider"), Meter Pay earnings and pay stubs (get_earnings scope "me"), and their own profile and availability (whoami, update_my_profile, update_my_availability). Use when the signed-in person asks about "my trips", "my earnings", "my schedule", "my rides" or their account; do not use for fleet-wide questions (meter-fleet-insights) or fleet settings (meter-settings-changes), which need an owner or admin role.
+description: "Help an individual Meter driver or rider with their own data through the Meter MCP tools: their trips (list_trips driver \"me\"), bookings (list_bookings scope \"driver\" or \"rider\"), Meter Pay earnings and pay stubs (get_earnings scope \"me\"), and their own profile and availability (whoami, update_my_profile, update_my_availability). Use when the signed-in person asks about \"my trips\", \"my earnings\", \"my schedule\", their past rides or their account; do not use to book, track or cancel a ride as a rider (meter-ride), for fleet-wide questions (meter-fleet-insights) or for fleet settings (meter-settings-changes), which need an owner or admin role."
 ---
 
 # A driver's or rider's own Meter data
@@ -37,13 +37,14 @@ Label every figure with its source tool. Do not present the result as an officia
 
 ## Profile and availability
 
-`update_my_profile` (name, business name on receipts, navigation app, receipt privacy options with Meter Pro) and `update_my_availability` (the weekly hours riders may book the driver for; the whole week is replaced, so include every working day) change only the signed-in person's own record. Follow the dry-run sequence from `meter-settings-changes`: call with `dry_run: true` first (it defaults to false), show the returned `changes` (`field`, `from`, `to`), get a yes, then repeat the call without `dry_run`. Email, phone, role and payout details are managed in the Meter app, not here.
+`update_my_profile` (name, business name on receipts, navigation app, receipt privacy options with Meter Pro) and `update_my_availability` (the weekly hours riders may book the driver for; the whole week is replaced, so include every working day) change only the signed-in person's own record. Follow the dry-run sequence from `meter-settings-changes`: call with `dry_run: true` first, save the returned proposal, show every `changes` row (`field`, `from`, `to`), get an explicit yes, then repeat the intended arguments with `proposal_id` and `dry_run: false`. Stale or expired proposals require showing the fresh replacement and asking again. Email, phone, role and payout details are managed in the Meter app, not here.
 
 ## What this skill does not do
 
 - It does not look at other drivers. `list_fleet_members`, `driver: "all"` and `scope: "fleet"` are owner/admin tools; a `forbidden` error confirms the person is a driver.
 - It does not guess ids. Trip and booking ids come from the list tools.
 - It does not change fares, fleet settings or bookings.
+- It does not book, track or cancel a ride as a rider; `meter-ride` does, with its own preview and confirmation.
 
 ## References
 

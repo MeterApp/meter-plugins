@@ -56,8 +56,8 @@ jobs:
           export CODEX_HOME
           codex plugin marketplace add . --json
           codex plugin list --available --json | tee /tmp/codex-plugins.json
-          grep -q '"pluginId": "meter@meterapp"' /tmp/codex-plugins.json
-          codex plugin add meter@meterapp --json
+          grep -q '"pluginId": "meter@meterapp-meter"' /tmp/codex-plugins.json
+          codex plugin add meter@meterapp-meter --json
 
       - name: The skills CLI discovers every skill
         run: |

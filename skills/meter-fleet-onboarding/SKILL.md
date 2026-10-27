@@ -1,6 +1,6 @@
 ---
 name: meter-fleet-onboarding
-description: Guide a new fleet owner through Meter fleet setup with the get_onboarding_checklist tool and the settings tools (update_fleet_settings, update_booking_settings, update_ride_option, assign_vehicle), always previewing with dry_run: true and confirming before applying, and knowing when to send them to the web onboarding at meterapp.co/fleet/onboarding instead. Use when someone has just created a fleet, asks what is left to set up, or wants help getting their fleet to its first booking; do not use for day-to-day questions about an established fleet (meter-fleet-insights) or isolated settings edits (meter-settings-changes).
+description: "Guide a new fleet owner through Meter fleet setup with the get_onboarding_checklist tool and the settings tools (update_fleet_settings, update_booking_settings, update_ride_option, assign_vehicle), always previewing with dry_run: true and confirming before applying, and knowing when to send them to the web onboarding at meterapp.co/fleet/onboarding instead. Use when someone has just created a fleet, asks what is left to set up, or wants help getting their fleet to its first booking; do not use for day-to-day questions about an established fleet (meter-fleet-insights) or isolated settings edits (meter-settings-changes)."
 ---
 
 # Onboarding a fleet with Meter
@@ -20,7 +20,7 @@ For each incomplete item, in the order the checklist gives:
 - Explain the item in one or two sentences in plain language (what it is, why the fleet needs it, whether riders can book without it).
 - Ask for the values you need. Do not fill in defaults the human did not choose, especially fares, cancellation terms and lead times.
 - Call the settings tool the item names with `dry_run: true` and only those fields. `dry_run` defaults to false, so never omit it on the preview call. Show the returned `changes` (each `field`, `from`, `to`) verbatim.
-- Only after an explicit yes, repeat the identical call without `dry_run`. Confirm `applied: true`, then re-run `get_onboarding_checklist` and continue.
+- Only after an explicit yes, repeat the intended arguments with the saved `proposal_id` and `dry_run: false`. Stale or expired proposals require showing the fresh replacement and asking again. Confirm `status: applied` (a no-op has `applied: false`), then re-run `get_onboarding_checklist` and continue.
 
 Never batch several items into one apply. One item, one confirmation.
 

@@ -11,7 +11,7 @@ Meter has no API keys for agents. Every request to `https://www.meterapp.co/api/
 4. **Consent.** The person's browser opens the authorization URL; they sign in to Meter and approve the connector at `https://www.meterapp.co/oauth/consent`.
 5. **Tokens.** The host exchanges the code for an access token and a refresh token and sends `Authorization: Bearer <access_token>` on every request. Refresh is the host's job; the server never sees a refresh token.
 
-Claude.ai and Claude Desktop connectors, ChatGPT connectors, Claude Code (`claude mcp add --transport http meter https://www.meterapp.co/api/mcp`), Cursor and Codex do all of this from the URL alone. The CLI (`npx @meterapp/meter login`) runs the same flow from a terminal and stores the session locally.
+Claude.ai and Claude Desktop connectors, ChatGPT connectors, Claude Code (`claude mcp add --transport http meter https://www.meterapp.co/api/mcp`), Codex do all of this from the URL alone. The CLI (`npx @meterapp/meter login`) runs the same flow from a terminal and stores the session locally.
 
 ## Roles
 

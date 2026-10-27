@@ -1,5 +1,5 @@
 {
-  "name": "meterapp",
+  "name": "meterapp-meter",
   "interface": {
     "displayName": "Meter Plugins"
   },

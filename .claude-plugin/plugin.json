@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "meter",
   "displayName": "Meter",
-  "version": "1.1.0",
-  "description": "Meter, the taxi meter and fleet platform, for AI agents. Ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting, guide onboarding, and change settings with a dry run and confirmation. Hosted MCP server with OAuth sign-in.",
+  "version": "1.4.0",
+  "description": "Meter, the taxi meter and fleet platform, for AI agents. Book, track and cancel your own taxi rides with a price preview and your confirmation; ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting; guide onboarding; and change settings with a dry run and confirmation. Hosted MCP server with OAuth sign-in, no API keys.",
   "author": {
     "name": "Meter",
     "email": "hello@meterapp.co",
@@ -12,5 +12,8 @@
   "homepage": "https://www.meterapp.co/docs/plugins",
   "repository": "https://github.com/MeterApp/meter-plugins",
   "license": "MIT",
-  "keywords": ["meter", "taxi", "fleet", "dispatch", "bookings", "earnings", "mcp", "oauth"]
+  "privacyPolicyUrl": "https://www.meterapp.co/privacy",
+  "termsOfServiceUrl": "https://www.meterapp.co/privacy",
+  "supportUrl": "https://www.meterapp.co/docs/plugins",
+  "keywords": ["meter", "taxi", "rides", "rider", "fleet", "dispatch", "bookings", "earnings", "mcp", "oauth"]
 }

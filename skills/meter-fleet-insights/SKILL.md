@@ -1,6 +1,6 @@
 ---
 name: meter-fleet-insights
-description: Answer questions about a Meter fleet's trips, bookings, drivers, vehicles, earnings and accounting using the Meter MCP tools (whoami, list_trips, list_bookings, list_fleet_members, list_vehicles, get_earnings, get_accounting_summary). Covers picking the right tool, role limits, pagination and presenting money and times correctly. Use for any "how many / how much / who / which / when" question about a fleet; do not use for changing settings (meter-settings-changes), setting up a new fleet (meter-fleet-onboarding), an individual driver's own data (meter-driver-personal), or explaining the API itself (meter-api-explainer).
+description: "Answer questions about a Meter fleet's trips, bookings, drivers, vehicles, earnings and accounting using the Meter MCP tools (whoami, list_trips, list_bookings, list_fleet_members, list_vehicles, get_earnings, get_accounting_summary). Covers picking the right tool, role limits, pagination and presenting money and times correctly. Use for any \"how many / how much / who / which / when\" question about a fleet; do not use for changing settings (meter-settings-changes), setting up a new fleet (meter-fleet-onboarding), an individual driver's own data (meter-driver-personal), booking a ride as a rider (meter-ride), or explaining the API itself (meter-api-explainer)."
 ---
 
 # Fleet insights with Meter

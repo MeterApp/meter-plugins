@@ -19,7 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 ERRORS: list[str] = []
 
 PLUGIN_NAME = "meter"
-MARKETPLACE_NAME = "meterapp"
+# Claude Code and Codex key marketplaces by name, so this one must not share
+# a name with another Meter marketplace: Car Image's is `meterapp`, skillhook's
+# `meterapp-skillhook`.
+MARKETPLACE_NAME = "meterapp-meter"
 ORIGIN = "https://www.meterapp.co"
 MCP_URL = f"{ORIGIN}/api/mcp"
 # The source repository is private: a link there 404s for everyone outside the
@@ -34,6 +37,7 @@ SKILLS = [
     "meter-settings-changes",
     "meter-driver-personal",
     "meter-api-explainer",
+    "meter-ride",
 ]
 # Skills that tell the agent to call an MCP tool must declare the dependency so
 # Codex can offer to connect the server when the skill is invoked. The
@@ -43,6 +47,20 @@ MCP_DEPENDENT = {
     "meter-fleet-onboarding",
     "meter-settings-changes",
     "meter-driver-personal",
+    "meter-ride",
+}
+# Skills that teach a write must teach the dry_run preview that comes first.
+WRITE_SKILLS = {"meter-settings-changes", "meter-fleet-onboarding", "meter-ride"}
+# The official MCP Registry entry (registry.modelcontextprotocol.io). The name is
+# reverse-DNS for meterapp.co, which the registry verifies before publishing.
+REGISTRY_NAME = "co.meterapp/meter"
+REGISTRY_SCHEMA = "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
+# Directory listing pages. https://www.meterapp.co/terms permanently redirects
+# to /privacy, which carries the terms of use, so both listings name the final URL.
+LISTING_URLS = {
+    "privacyPolicyUrl": ("privacyPolicyURL", f"{ORIGIN}/privacy"),
+    "termsOfServiceUrl": ("termsOfServiceURL", f"{ORIGIN}/privacy"),
+    "supportUrl": ("supportURL", None),
 }
 GENERATED_REFERENCES = {"references/tools.md", "references/data-model.md"}
 
@@ -81,7 +99,6 @@ MANIFESTS = {
     "open": ".plugin/plugin.json",
     "claude": ".claude-plugin/plugin.json",
     "codex": ".codex-plugin/plugin.json",
-    "cursor": ".cursor-plugin/plugin.json",
 }
 manifests = {surface: load_json(path) for surface, path in MANIFESTS.items()}
 
@@ -110,6 +127,25 @@ for surface, manifest in manifests.items():
             if field in interface:
                 check_path(f"{surface}.interface.{field}", interface[field])
 
+# OpenAI's plugin submission refuses longer listing text.
+codex_interface = manifests["codex"].get("interface", {})
+for field, limit in (("displayName", 30), ("shortDescription", 30), ("longDescription", 4000)):
+    value = codex_interface.get(field, "")
+    if not value or len(value) > limit:
+        error(f"codex interface {field} must be 1-{limit} characters, got {len(value)}")
+
+# --- directory listing -----------------------------------------------------
+
+# The Anthropic Directory reads these from the Claude manifest and warns when the
+# privacy policy is missing; OpenAI requires them for review. Both listings name
+# the same pages.
+for field, (codex_field, required) in LISTING_URLS.items():
+    value = manifests["claude"].get(field)
+    if not isinstance(value, str) or not value.startswith(f"{ORIGIN}/") or (required and value != required):
+        error(f"claude manifest {field} must be {required or 'a page on ' + ORIGIN}, got {value!r}")
+    elif value != codex_interface.get(codex_field):
+        error(f"claude manifest {field} must match the codex interface {codex_field}")
+
 # --- marketplaces ----------------------------------------------------------
 
 claude_marketplace = load_json(".claude-plugin/marketplace.json")
@@ -136,6 +172,50 @@ server = load_json(".mcp.json").get("mcpServers", {}).get(PLUGIN_NAME, {})
 expected = {"type": "http", "url": MCP_URL}
 if server != expected:
     error(f".mcp.json must configure the hosted server exactly as {expected}, got {server}")
+
+# Any configured Authorization header disables Claude Code's OAuth sign-in on a
+# directory install, whatever its value, even when the variable it names is
+# unset. Nothing here may configure one, in any manifest or MCP file.
+def authorization_headers(node: object, owner: str) -> None:
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == "headers":
+                if isinstance(value, dict):
+                    names = list(value)
+                elif isinstance(value, list):
+                    names = [item.get("name", "") for item in value if isinstance(item, dict)]
+                else:
+                    names = []
+                if any(str(name).lower() == "authorization" for name in names):
+                    error(f"{owner}: an Authorization header disables OAuth sign-in")
+            authorization_headers(value, owner)
+    elif isinstance(node, list):
+        for item in node:
+            authorization_headers(item, owner)
+
+
+for relative in [*MANIFESTS.values(), ".mcp.json", "server.json"]:
+    authorization_headers(load_json(relative), relative)
+
+# --- MCP Registry entry ----------------------------------------------------
+
+registry = load_json("server.json")
+if registry.get("$schema") != REGISTRY_SCHEMA:
+    error(f"server.json $schema must be {REGISTRY_SCHEMA}")
+if registry.get("name") != REGISTRY_NAME:
+    error(f"server.json name must be {REGISTRY_NAME}")
+# A published registry version can never change, so it moves with the plugin.
+if registry.get("version") != manifests["claude"].get("version"):
+    error("server.json version must match the manifest version")
+if not 1 <= len(registry.get("description", "")) <= 100:
+    error("server.json description must be 1-100 characters")
+if registry.get("remotes") != [{"type": "streamable-http", "url": MCP_URL}]:
+    error(f"server.json remotes must be exactly one streamable-http remote at {MCP_URL}")
+if "packages" in registry:
+    error("server.json must not list packages: the server is remote-only")
+for icon in registry.get("icons", []):
+    if not str(icon.get("src", "")).startswith(f"{ORIGIN}/"):
+        error(f"server.json icons must be served from {ORIGIN}")
 
 # --- skills ----------------------------------------------------------------
 
@@ -171,7 +251,12 @@ for name in found:
         if not separator:
             error(f"{name}: malformed frontmatter line: {line}")
             continue
-        metadata[key.strip()] = value.strip().strip("\"'")
+        value = value.strip()
+        # An unquoted value containing ": " is not valid YAML. Claude Code
+        # tolerates it, but the skills CLI silently skips the skill.
+        if ": " in value and not (value.startswith('"') and value.endswith('"')):
+            error(f"{name}: quote the {key.strip()} value; it contains ': '")
+        metadata[key.strip()] = value.strip("\"'")
 
     if set(metadata) != {"name", "description"}:
         error(f"{name}: frontmatter must contain only name and description")
@@ -195,7 +280,7 @@ for name in found:
 
     # Writes without a dry run are the one thing a skill must never teach.
     body = content[match.end() :]
-    if name in {"meter-settings-changes", "meter-fleet-onboarding"} and "dry_run" not in body:
+    if name in WRITE_SKILLS and "dry_run" not in body:
         error(f"{name}: a skill that changes settings must describe the dry_run sequence")
 
 # --- generated references --------------------------------------------------
@@ -242,6 +327,25 @@ SECRET_PATTERNS = {
     re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"): "a private key",
     re.compile(r"(?i)\b(?:api[_-]?key|secret|password|token)\s*[:=]\s*[\"'][A-Za-z0-9_\-./+]{16,}[\"']"): "an assigned credential",
 }
+# An install or update command that names another marketplace fails for
+# whoever copies it. CHANGELOG.md keeps the old name in its migration notes.
+MARKETPLACE_REFERENCES = (
+    re.compile(rf"(?<![\w/@.-]){PLUGIN_NAME}@([a-z0-9][a-z0-9-]*)"),
+    re.compile(r"\bmarketplace (?:update|upgrade) ([a-z0-9][a-z0-9-]*)"),
+)
+
+# The Anthropic Directory holds a plugin for review ("Uses a credential from the
+# user's machine") when anything in it reads a key or secret from environment
+# variables or files and sends it on, examples included. An agent uses the
+# connection the host authenticated; the CLI signs in with `meter login`.
+CREDENTIAL_READS = re.compile(
+    r"\$\{?[A-Z][A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD)\b"  # $METER_API_KEY, ${GITHUB_TOKEN}
+    r"|process\.env(?:\.|\[\s*['\"])[A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD)\b"
+    r"|\bos\.(?:environ|getenv)\b"
+    r"|Deno\.env\.get\("
+    r"|import\.meta\.env\.[A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD)\b"
+    r"|\$\{user_config\."  # Meter takes no key, not even an optional one
+)
 
 for path in sorted(ROOT.rglob("*")):
     if not path.is_file() or ".git" in path.parts or path.suffix in {".svg", ".pyc"}:
@@ -259,6 +363,14 @@ for path in sorted(ROOT.rglob("*")):
     for pattern, label in SECRET_PATTERNS.items():
         if pattern.search(text):
             error(f"{relative}: contains {label}")
+    for match in CREDENTIAL_READS.finditer(text):
+        line = text.count("\n", 0, match.start()) + 1
+        error(f"{relative}:{line}: reads a credential from the user's machine: {match.group(0)}")
+    if relative != Path("CHANGELOG.md"):
+        for pattern in MARKETPLACE_REFERENCES:
+            for name in pattern.findall(text):
+                if name != MARKETPLACE_NAME:
+                    error(f"{relative}: names the marketplace {name}; it is {MARKETPLACE_NAME}")
 
 if ERRORS:
     print("Plugin validation failed:", file=sys.stderr)

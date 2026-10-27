@@ -1,6 +1,6 @@
 ---
 name: meter-api-explainer
-description: Explain how Meter's agent surface works and what its data means, using the self-documenting describe_api and explain_data tools and the machine-readable docs (llms.txt, llms-full.txt, agents.md, openapi-mcp.json). Covers "how do I connect", "which tool answers X", "what does this field mean", OAuth sign-in, roles, and drafting an integration or client against the MCP server. Use for questions about the API, its tools, fields, authentication or integration code; do not use to actually answer a fleet question (meter-fleet-insights), change settings (meter-settings-changes) or onboard a fleet (meter-fleet-onboarding).
+description: "Explain how Meter's agent surface works and what its data means, using the self-documenting describe_api and explain_data tools and the machine-readable docs (llms.txt, llms-full.txt, agents.md, openapi-mcp.json). Covers \"how do I connect\", \"which tool answers X\", \"what does this field mean\", OAuth sign-in, roles, and drafting an integration or client against the MCP server. Use for questions about the API, its tools, fields, authentication or integration code; do not use to actually answer a fleet question (meter-fleet-insights), change settings (meter-settings-changes) or onboard a fleet (meter-fleet-onboarding)."
 ---
 
 # Explaining the Meter API
@@ -11,7 +11,7 @@ Meter's agent surface is one remote MCP server, `https://www.meterapp.co/api/mcp
 
 When the `meter` MCP server is connected:
 
-- `describe_api` with no arguments returns the full catalog: every tool with purpose, roles, arguments and an example call. With `tool: "<name>"` it adds the result fields.
+- `describe_api` with no arguments returns a compact domain index with tool counts and listed tool names. Use `domain: "<domain>"` to browse its tools, access, risk and sensitive-field escalations; use `tool: "<name>"` for full detail including arguments, an example call and result fields. Choose one selector. Responses are capped at 64 KB; if truncated, request a tool or use `explain_data` for a specific field.
 - `explain_data` with `tool` (and optionally `field`, a name or dot path like `items.pickup.address`) returns the meaning, JSON type, unit, allowed values and role visibility of result fields, generated from the schemas the server validates against.
 - `whoami` shows what the signed-in person can do here.
 
@@ -44,8 +44,8 @@ Tokens carry the person's own permissions: owners and admins see fleet-wide data
 ## Drafting an integration
 
 - Transport: one JSON-RPC 2.0 message per POST, `Accept: application/json, text/event-stream`, JSON responses, stateless (no session id). Methods `initialize`, `tools/list`, `tools/call`, `ping`.
-- Prefer an MCP client library. In TypeScript, `@meterapp/meter-sdk` (`MeterMcpClient`) speaks this protocol and ships the same zod schemas and typed tool inputs; the CLI `npx @meterapp/meter` wraps it for terminals (`meter call <tool> --<field> <value> [--dry-run]` calls any tool, `meter describe`/`meter explain` mirror `describe_api`/`explain_data`, `meter mcp` is a local stdio bridge).
-- Write tools (`update_fleet_settings`, `update_booking_settings`, `update_ride_option`, `assign_vehicle`, `update_my_profile`, `update_my_availability`) take `dry_run` (default false) and return `{ applied, dry_run, changes: [{ field, from, to }], <object> }`; `get_onboarding_checklist` is the read tool that names which of them completes each setup step. Explain the preview-then-apply convention whenever a write is discussed.
+- Prefer an MCP client library. In TypeScript, `@meterapp/meter-sdk` (`MeterMcpClient`) speaks this protocol and ships the same zod schemas and typed tool inputs; the CLI `npx @meterapp/meter` wraps it for terminals (`meter call <tool> --<field> <value> [--dry-run]` calls any tool, `meter describe` prints the offline catalog reference and `meter explain` prints field documentation, `meter mcp` is a local stdio bridge).
+- Write tools (`update_fleet_settings`, `update_booking_settings`, `update_ride_option`, `assign_vehicle`, `update_my_profile`, `update_my_availability`) require a saved proposal and return `{ status, applied, dry_run, changes: [{ field, from, to }], proposal?, <object> }`; `get_onboarding_checklist` is the read tool that names which of them completes each setup step. Explain preview with `dry_run: true`, display of all changes, explicit human confirmation, and repetition of intended arguments with `proposal_id` and `dry_run: false`. A first call without a live proposal writes nothing; stale or expired proposals need fresh confirmation.
 - Validate arguments against the tool's `inputSchema` from `openapi-mcp.json` before calling; handle the error codes listed in `llms-full.txt` (`unauthenticated`, `forbidden`, `not_found`, `invalid_argument`, `fleet_required`, `fleet_not_operational`, `internal_error`) using the `Next:` guidance the server returns.
 - Never hardcode ids, and never store tokens in code or config files. Point at the OAuth flow instead.
 
