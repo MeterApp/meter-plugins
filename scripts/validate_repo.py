@@ -63,6 +63,11 @@ LISTING_URLS = {
     "supportUrl": ("supportURL", None),
 }
 GENERATED_REFERENCES = {"references/tools.md", "references/data-model.md"}
+GENERATED_REFERENCES.update(
+    str(path.relative_to(ROOT))
+    for directory in ("data-model", "tools")
+    for path in (ROOT / "references" / directory).glob("part-*.md")
+)
 
 
 def error(message: str) -> None:
@@ -293,6 +298,12 @@ for relative in GENERATED_REFERENCES:
         error(f"{relative}: does not look generated; do not edit by hand")
 
 # --- local links -----------------------------------------------------------
+
+# The directory could not inspect the former 367 KB data-model reference.
+# Keep readable references below a conservative 200 KB per-file budget.
+for reference in (ROOT / "references").rglob("*.md"):
+    if reference.stat().st_size > 200_000:
+        error(f"{reference.relative_to(ROOT)}: split generated references below 200 KB for directory inspection")
 
 link = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 for markdown in ROOT.rglob("*.md"):

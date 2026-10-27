@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1 — 2026-10-27
+
+- Split the generated tool and data-model references into smaller linked files so the directory validator can inspect every definition. Existing reference links remain indexes, with no tools or fields removed.
+- Validate reference file sizes before publishing to prevent another directory inspection hold.
+
 ## 1.4.0 — 2026-10-14
 
 The marketplace is now `meterapp-meter`, and the plugin installs as `meter@meterapp-meter`. It was `meterapp`, the name the Car Image marketplace (`MeterApp/car-image-plugins`) also uses, and Claude Code and Codex key marketplaces by name, so whoever had added one could not add the other. The new name follows skillhook's `meterapp-skillhook`.

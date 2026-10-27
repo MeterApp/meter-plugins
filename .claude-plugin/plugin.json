@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "meter",
   "displayName": "Meter",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Meter, the taxi meter and fleet platform, for AI agents. Book, track and cancel your own taxi rides with a price preview and your confirmation; ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting; guide onboarding; and change settings with a dry run and confirmation. Hosted MCP server with OAuth sign-in, no API keys.",
   "author": {
     "name": "Meter",

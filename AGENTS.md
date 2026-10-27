@@ -43,8 +43,12 @@ nested plugin directory, which is why one repository serves all supported channe
   update command use it; `scripts/validate_repo.py` fails otherwise, except in
   `CHANGELOG.md`, whose migration notes give commands with the old name.
 - **Generated references are not edited by hand.** `references/tools.md` and
-  `references/data-model.md` come from `pnpm run agent-docs:generate` in the
+  `references/data-model.md` and their linked `tools/part-*.md` and `data-model/part-*.md` files come from `pnpm run agent-docs:generate` in the
   source repository's `backend/`; a test there fails when they are stale.
+- **Keep reference files below 200 KB.** Anthropic held v1.4.0 because its
+  validator could not inspect the 367 KB data-model file (2026-10-27). The
+  generator keeps complete DTO sections in smaller linked parts; the plugin
+  validator checks the size budget before publication.
 - **Product facts do not drift.** Tool names, roles and argument names come from
   the generated references; a skill that quotes them must match. The MCP URL is
   `https://www.meterapp.co/api/mcp` and every published link uses
