@@ -2,6 +2,24 @@
 
 Generated from the `@meterapp/meter-sdk` catalog and DTO schemas; do not edit by hand. See the [reference index](../tools.md) for all definitions.
 
+## assign_booking
+
+**Assign a booking driver** · servers: `fleet` · personas: `fleet_owner, fleet_admin` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingChangeWrite`
+
+Assign a current fleet driver to an existing booking. Owners and admins only. Preview with dry_run, show the scheduled time and old/new driver, then apply the saved proposal_id with identical arguments. Retains the rider's payment requirement; never charges, authorizes a card or creates a booking. Current status, schedule and assignment must still match the preview.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `booking_id` | string (uuid) | yes |  | Booking from get_booking or list_bookings. |
+| `driver_id` | string (uuid) | yes |  | Current driver member of the booking fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+
+Example:
+
+```json
+{"name":"assign_booking","arguments":{"booking_id":"33333333-3333-4333-8333-333333333333","driver_id":"44444444-4444-4444-8444-444444444444","dry_run":true}}
+```
 ## unassign_booking
 
 **Remove a booking driver assignment** · servers: `fleet` · personas: `fleet_owner, fleet_admin` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingChangeWrite`

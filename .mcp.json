@@ -1,8 +1,12 @@
 {
   "mcpServers": {
-    "meter": {
+    "meter-fleet": {
       "type": "http",
-      "url": "https://www.meterapp.co/api/mcp"
+      "url": "https://www.meterapp.co/api/mcp/fleet"
+    },
+    "meter-rides": {
+      "type": "http",
+      "url": "https://www.meterapp.co/api/mcp/rider"
     }
   }
 }

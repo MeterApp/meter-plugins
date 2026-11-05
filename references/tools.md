@@ -1,6 +1,6 @@
 # Meter MCP tools
 
-Generated from the `@meterapp/meter-sdk` catalog (server version 1.2.0); do not edit by hand. Servers: `https://www.meterapp.co/api/mcp/rider` (rider), `https://www.meterapp.co/api/mcp/fleet` (fleet), `https://www.meterapp.co/api/mcp` (both). The live server describes itself too: call `describe_api` for this list and `explain_data` for any result field.
+Generated from the `@meterapp/meter-sdk` catalog (server version 2.0.1); do not edit by hand. Servers: `https://www.meterapp.co/api/mcp/rider` (rider), `https://www.meterapp.co/api/mcp/fleet` (fleet). The live server describes itself too: call `describe_api` for this list and `explain_data` for any result field.
 
 | Tool | Servers | Personas | Writes? | Returns |
 | --- | --- | --- | --- | --- |
@@ -92,7 +92,7 @@ Generated from the `@meterapp/meter-sdk` catalog (server version 1.2.0); do not 
 | [`get_booking`](tools/part-1.md#get_booking) | rider + fleet | solo_driver, fleet_driver, fleet_admin, fleet_owner, rider | no | Booking |
 | [`get_booking_audit_log`](tools/part-1.md#get_booking_audit_log) | rider + fleet | solo_driver, fleet_driver, fleet_admin, fleet_owner, rider | no | BookingAuditLog |
 | [`update_booking_settings`](tools/part-1.md#update_booking_settings) | fleet | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | BookingSettingsWrite |
-| [`assign_booking`](tools/part-1.md#assign_booking) | fleet | fleet_owner, fleet_admin | yes (saved proposal + confirmation) | BookingChangeWrite |
+| [`assign_booking`](tools/part-2.md#assign_booking) | fleet | fleet_owner, fleet_admin | yes (saved proposal + confirmation) | BookingChangeWrite |
 | [`unassign_booking`](tools/part-2.md#unassign_booking) | fleet | fleet_owner, fleet_admin | yes (saved proposal + confirmation) | BookingChangeWrite |
 | [`update_booking`](tools/part-2.md#update_booking) | fleet | fleet_owner, fleet_admin, fleet_driver, solo_driver | yes (saved proposal + confirmation) | BookingChangeWrite |
 | [`cancel_booking`](tools/part-2.md#cancel_booking) | rider + fleet | fleet_owner, fleet_admin, fleet_driver, solo_driver, rider | yes (saved proposal + confirmation) | BookingCancellationWrite |

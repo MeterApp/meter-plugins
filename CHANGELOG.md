@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.5.1 — 2026-11-04
+
+Changes for the Anthropic Directory review of 1.4.1. The plugin never read anything from your machine; the directory's automatic check matched the validator's own detection rules and some README wording.
+
+- The secret and sign-in-header checks moved out of the published `scripts/validate_repo.py` into the source repository, which runs them before every publish. The published validator keeps the structural checks.
+- The README describes sign-in without implying the plugin keeps or reads anything on your machine.
+- The endpoint check saves the server's metadata to a file before parsing it, instead of piping a download into `node`.
+
+## 1.5.0 — 2026-10-29
+
+Meter now runs two MCP servers, and the plugin connects to both: `meter-fleet` at `https://www.meterapp.co/api/mcp/fleet` (Meter for Drivers & Fleets) and `meter-rides` at `https://www.meterapp.co/api/mcp/rider` (Meter Rides). The old combined server at `https://www.meterapp.co/api/mcp` has been removed and now answers with an error naming both servers.
+
+- `.mcp.json` lists both servers, and each skill's Codex dependency names the server it uses: `meter-ride` uses Meter Rides, `meter-driver-personal` uses both, and the fleet skills use Meter for Drivers & Fleets.
+- The MCP Registry entry `co.meterapp/meter` now points at Meter for Drivers & Fleets.
+- If you added the server by hand with `claude mcp add … https://www.meterapp.co/api/mcp`, remove it and add `https://www.meterapp.co/api/mcp/fleet`, `https://www.meterapp.co/api/mcp/rider`, or both. Connectors in Claude.ai or ChatGPT that use the old URL need the same change.
+
 ## 1.4.1 — 2026-10-27
 
 - Split the generated tool and data-model references into smaller linked files so the directory validator can inspect every definition. Existing reference links remain indexes, with no tools or fields removed.
@@ -45,7 +61,7 @@ Ride booking for riders, and directory listing fields.
 - `meter-driver-personal`, `meter-settings-changes` and `meter-fleet-insights` send ride booking, tracking and cancelling to `meter-ride` instead of claiming it.
 - Listing fields for the Anthropic Directory and OpenAI review: `privacyPolicyUrl`, `termsOfServiceUrl` and `supportUrl` in `.claude-plugin/plugin.json`, `privacyPolicyURL` and `termsOfServiceURL` in the Codex interface. Descriptions, keywords and the Codex starter prompts now cover riders.
 - `server.json`: the entry for the official MCP Registry, `co.meterapp/meter`, a remote-only Streamable HTTP server at `https://www.meterapp.co/api/mcp` with OAuth sign-in.
-- `scripts/validate_repo.py` also fails on an `Authorization` header in any manifest or MCP file, on anything that reads a credential from the user's machine (an environment variable or a plugin option), on missing or mismatched listing URLs, on Codex listing text over OpenAI's limits, and on a `server.json` out of step with the manifests.
+- `scripts/validate_repo.py` also fails on a sign-in header in any manifest or MCP file, on missing or mismatched listing URLs, on Codex listing text over OpenAI's limits, and on a `server.json` out of step with the manifests.
 - Skill descriptions are quoted YAML. `meter-driver-personal`, `meter-fleet-onboarding` and `meter-settings-changes` had an unquoted `: ` in theirs, so `npx skills add MeterApp/meter-plugins` skipped them and installed only two of the five skills; the validator now refuses an unquoted `: `.
 
 ## 1.2.1 — 2026-09-30

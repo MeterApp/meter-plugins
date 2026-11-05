@@ -573,7 +573,7 @@ A booking (scheduled ride). No payment-provider ids, internal snapshots or dispa
 | `agent_action_status.has_ambiguous_reminder` | boolean |  | everyone | A reminder may have been delivered; inspect before another reminder. |
 | `is_asap` | boolean |  | everyone | True for on-demand ("as soon as possible") rides. |
 | `is_time_booking` | boolean |  | everyone | True for hourly / by-the-hour bookings. |
-| `booking_source` | string\|null |  | everyone | Where the booking came from: web, rider_app, meter_app, admin_web, voice, messaging. |
+| `booking_source` | string\|null |  | everyone | Where the booking came from: web, web_embedded, rider_app, meter_app, admin_web, voice, messaging. |
 | `scheduled_at` | string | ISO 8601 | everyone | Requested pickup time. |
 | `timezone` | string |  | everyone | IANA timezone of the pickup. |
 | `pickup` | object |  | everyone | Pickup place. |
@@ -627,7 +627,7 @@ Result of list_bookings. Cursor pagination is by scheduled time.
 | `items[].agent_action_status.has_ambiguous_reminder` | boolean |  | everyone | A reminder may have been delivered; inspect before another reminder. |
 | `items[].is_asap` | boolean |  | everyone | True for on-demand ("as soon as possible") rides. |
 | `items[].is_time_booking` | boolean |  | everyone | True for hourly / by-the-hour bookings. |
-| `items[].booking_source` | string\|null |  | everyone | Where the booking came from: web, rider_app, meter_app, admin_web, voice, messaging. |
+| `items[].booking_source` | string\|null |  | everyone | Where the booking came from: web, web_embedded, rider_app, meter_app, admin_web, voice, messaging. |
 | `items[].scheduled_at` | string | ISO 8601 | everyone | Requested pickup time. |
 | `items[].timezone` | string |  | everyone | IANA timezone of the pickup. |
 | `items[].pickup` | object |  | everyone | Pickup place. |

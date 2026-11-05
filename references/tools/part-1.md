@@ -55,6 +55,7 @@ Create a draft monthly policy, activate or pause it, add members, change a membe
 | `action` | "draft" \| "activate" \| "pause" \| "add_participants" \| "change_participant" \| "end_participant" | yes |  |  |
 | `policy_id` | string (uuid) | no |  |  |
 | `participant_id` | string (uuid) | no |  |  |
+| `payout_floor_minor` | integer | no |  | Draft only. Minimum driver payout protected from recurring expense collection, in minor currency units (USD cents). Defaults to 0, allowing collection from small payouts. Cash debt recovery runs first. |
 | `monthly_target_minor` | integer | no |  |  |
 | `effective_start_at` | string (date-time) | no |  |  |
 | `effective_end_at` | string (date-time) | no |  |  |
@@ -545,7 +546,7 @@ Example:
 
 **Describe the Meter MCP API** · servers: `rider + fleet` · personas: `solo_driver, fleet_driver, fleet_admin, fleet_owner, rider` · read-only
 
-Self-documentation. Without arguments returns a compact domain index with tool counts and listed tool names. With domain, describes that domain's tools, access, risk and sensitive-field escalations. With tool, returns full detail including arguments, an example call and result fields. Choose domain or tool. Responses are capped at 64 KB; use explain_data with a tool and field for more focused result-field documentation. Free and available to any signed-in user.
+Read API documentation only; never executes another tool or changes account data. Every authorized operation is advertised separately by tools/list with its own input schema and annotations. Without arguments returns a compact domain index with tool counts and listed tool names. With domain, describes that domain's tools, access, risk and sensitive-field escalations. With tool, returns full detail including arguments, an example call and result fields. Choose domain or tool. Responses are capped at 64 KB; use explain_data with a tool and field for more focused result-field documentation. Free and available to any signed-in user.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -648,7 +649,7 @@ Example:
 
 **Update fleet settings** · servers: `fleet` · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `FleetSettingsWrite`
 
-Change a fleet's public and operational settings: name, description, contact/WhatsApp/dispatch phones, website, city, country, region, currency, timezone, brand colors, app icon, whether riders see driver locations, whether drivers may use custom fares, and out-of-zone pickup/drop-off rules. Owners and admins only, also while the fleet is still completing setup; drivers get a permission error, and a fleet whose billing has lapsed returns fleet_not_operational. Pass only the fields to change. Preview with dry_run: true, then confirm with the saved proposal_id and identical arguments. Not for fares, booking policy, zones, the join code, payouts, billing or the booking page; find those tools with find_tools.
+Change a fleet's public and operational settings: name, description, contact/WhatsApp/dispatch phones, website, city, country, region, currency, timezone, brand colors, app icon, whether riders see driver locations, whether drivers may use custom fares, and out-of-zone pickup/drop-off rules. Owners and admins only, also while the fleet is still completing setup; drivers get a permission error, and a fleet whose billing has lapsed returns fleet_not_operational. Pass only the fields to change. Preview with dry_run: true, then confirm with the saved proposal_id and identical arguments. Not for fares, booking policy, zones, the join code, payouts, billing or the booking page; choose their individual tools from tools/list.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -1695,22 +1696,4 @@ Example:
 
 ```json
 {"name":"update_booking_settings","arguments":{"fleet_id":"11111111-1111-4111-8111-111111111111","dry_run":true,"min_lead_time_seconds":3600,"cancellation_grace_period_seconds":600,"payment_mode":"pre_payment_required"}}
-```
-## assign_booking
-
-**Assign a booking driver** · servers: `fleet` · personas: `fleet_owner, fleet_admin` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingChangeWrite`
-
-Assign a current fleet driver to an existing booking. Owners and admins only. Preview with dry_run, show the scheduled time and old/new driver, then apply the saved proposal_id with identical arguments. Retains the rider's payment requirement; never charges, authorizes a card or creates a booking. Current status, schedule and assignment must still match the preview.
-
-| Argument | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `booking_id` | string (uuid) | yes |  | Booking from get_booking or list_bookings. |
-| `driver_id` | string (uuid) | yes |  | Current driver member of the booking fleet. |
-| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
-| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
-
-Example:
-
-```json
-{"name":"assign_booking","arguments":{"booking_id":"33333333-3333-4333-8333-333333333333","driver_id":"44444444-4444-4444-8444-444444444444","dry_run":true}}
 ```

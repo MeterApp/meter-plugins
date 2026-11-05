@@ -1,17 +1,17 @@
 # Authorization
 
-Meter has no API keys for agents. Every request to `https://www.meterapp.co/api/mcp` carries an OAuth 2.1 access token that belongs to a signed-in Meter user, and the server answers exactly what that person could see or do in the Meter apps.
+Meter has no API keys for agents. Every request to `https://www.meterapp.co/api/mcp/fleet` or `https://www.meterapp.co/api/mcp/rider` carries an OAuth 2.1 access token that belongs to a signed-in Meter user, and the server answers exactly what that person could see or do in the Meter apps.
 
 ## The flow, as hosts implement it
 
-1. **Challenge.** An unauthenticated `POST /api/mcp` returns `401` with
-   `WWW-Authenticate: Bearer resource_metadata="https://www.meterapp.co/.well-known/oauth-protected-resource", error="invalid_token"`.
-2. **Protected-resource metadata (RFC 9728).** `GET https://www.meterapp.co/.well-known/oauth-protected-resource` returns the `resource`, `authorization_servers` (Supabase Auth, `https://<project>.supabase.co/auth/v1`), `bearer_methods_supported: ["header"]` and `scopes_supported` (`openid`, `email`, `profile`). The path-suffixed form `/.well-known/oauth-protected-resource/api/mcp` is also served.
+1. **Challenge.** An unauthenticated `POST /api/mcp/fleet` returns `401` with
+   `WWW-Authenticate: Bearer resource_metadata="https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet", error="invalid_token"` (Meter Rides points at `…/api/mcp/rider`).
+2. **Protected-resource metadata (RFC 9728).** That document returns the `resource`, `authorization_servers` (Supabase Auth, `https://<project>.supabase.co/auth/v1`), `bearer_methods_supported: ["header"]` and `scopes_supported` (`openid`, `email`, `profile`).
 3. **Authorization-server metadata.** `GET <issuer>/.well-known/oauth-authorization-server` lists the authorization, token and registration endpoints. PKCE with `S256` is required. Dynamic client registration is enabled so MCP hosts can register themselves.
 4. **Consent.** The person's browser opens the authorization URL; they sign in to Meter and approve the connector at `https://www.meterapp.co/oauth/consent`.
 5. **Tokens.** The host exchanges the code for an access token and a refresh token and sends `Authorization: Bearer <access_token>` on every request. Refresh is the host's job; the server never sees a refresh token.
 
-Claude.ai and Claude Desktop connectors, ChatGPT connectors, Claude Code (`claude mcp add --transport http meter https://www.meterapp.co/api/mcp`), Codex do all of this from the URL alone. The CLI (`npx @meterapp/meter login`) runs the same flow from a terminal and stores the session locally.
+Claude.ai and Claude Desktop connectors, ChatGPT connectors, Claude Code (`claude mcp add --transport http meter-fleet https://www.meterapp.co/api/mcp/fleet`), Codex do all of this from the URL alone. The CLI (`npx @meterapp/meter login`) runs the same flow from a terminal and stores the session locally.
 
 ## Roles
 

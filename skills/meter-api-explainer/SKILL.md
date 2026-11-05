@@ -5,11 +5,11 @@ description: "Explain how Meter's agent surface works and what its data means, u
 
 # Explaining the Meter API
 
-Meter's agent surface is one remote MCP server, `https://www.meterapp.co/api/mcp`, secured with OAuth 2.1 (PKCE). It is self-documenting, and the same documentation is published as static files. Use both.
+Meter's agent surface is two remote MCP servers from one catalog, `https://www.meterapp.co/api/mcp/fleet` (Meter for Drivers & Fleets) and `https://www.meterapp.co/api/mcp/rider` (Meter Rides), secured with OAuth 2.1 (PKCE). It is self-documenting, and the same documentation is published as static files. Use both.
 
 ## Ask the server
 
-When the `meter` MCP server is connected:
+When a Meter MCP server (`meter-fleet` or `meter-rides`) is connected:
 
 - `describe_api` with no arguments returns a compact domain index with tool counts and listed tool names. Use `domain: "<domain>"` to browse its tools, access, risk and sensitive-field escalations; use `tool: "<name>"` for full detail including arguments, an example call and result fields. Choose one selector. Responses are capped at 64 KB; if truncated, request a tool or use `explain_data` for a specific field.
 - `explain_data` with `tool` (and optionally `field`, a name or dot path like `items.pickup.address`) returns the meaning, JSON type, unit, allowed values and role visibility of result fields, generated from the schemas the server validates against.
@@ -27,7 +27,7 @@ Without a connection, or when drafting code, read the published files. They are 
 | `https://www.meterapp.co/llms-full.txt` | everything: OAuth flow, transport, every tool with arguments and result fields, error codes, data model |
 | `https://www.meterapp.co/agents.md` | tool table (name, roles, writes?), authorization model, safety rules, the dry_run convention |
 | `https://www.meterapp.co/openapi-mcp.json` | OpenAPI 3.1: the JSON-RPC envelope, the `oauth2` security scheme, JSON Schemas for every tool under `x-mcp` and `components.schemas` |
-| `https://www.meterapp.co/.well-known/oauth-protected-resource` | which authorization server issues tokens (RFC 9728) |
+| `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet` (and `…/api/mcp/rider`) | which authorization server issues tokens (RFC 9728) |
 
 Human pages: `https://www.meterapp.co/docs`, `/docs/mcp`, `/docs/cli`, `/docs/plugins`, `/docs/authentication`, `/docs/data`.
 
@@ -35,7 +35,7 @@ Human pages: `https://www.meterapp.co/docs`, `/docs/mcp`, `/docs/cli`, `/docs/pl
 
 There are no API keys. Describe the flow in these terms:
 
-1. The client POSTs to `/api/mcp` without a token and gets 401 with `WWW-Authenticate: Bearer resource_metadata="https://www.meterapp.co/.well-known/oauth-protected-resource"`.
+1. The client POSTs to `/api/mcp/fleet` (or `/api/mcp/rider`) without a token and gets 401 with `WWW-Authenticate: Bearer resource_metadata="https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet"` (the rider server names its own document).
 2. That document names the authorization server (Supabase Auth) and scopes; `<issuer>/.well-known/oauth-authorization-server` lists its endpoints. PKCE is required; dynamic client registration is available.
 3. The person signs in and approves the connector at `https://www.meterapp.co/oauth/consent`; the client exchanges the code for tokens and sends `Authorization: Bearer <access_token>`.
 

@@ -579,6 +579,7 @@ Result of get_fleet. Drivers get public info; owners/admins also get settings an
 | `booking_settings.pre_payment_enabled` | boolean |  | everyone | Whether riders must authorize payment before the ride. |
 | `booking_settings.min_lead_time_seconds` | number | seconds | everyone | Minimum notice for a scheduled booking. |
 | `booking_settings.time_slot_minutes` | number\|null | minutes | everyone | Booking time-slot granularity, or null. |
+| `booking_settings.minimum_duration_minutes` | number\|null | minutes | everyone | Minimum length of an hourly booking, or null when none is set. |
 | `booking_settings.cancellation_fee_fraction` | number |  | everyone | Cancellation fee as a fraction of the fare (0-1). |
 | `booking_settings.cancellation_grace_period_seconds` | number | seconds | everyone | Free-cancellation window after booking. |
 | `booking_settings.individual_passenger_capacity` | number |  | everyone | Default passenger capacity for individual bookings. |

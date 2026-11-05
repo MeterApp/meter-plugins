@@ -5,7 +5,7 @@ description: "Answer questions about a Meter fleet's trips, bookings, drivers, v
 
 # Fleet insights with Meter
 
-The Meter MCP server at `https://www.meterapp.co/api/mcp` returns the data the signed-in person already sees in the Meter apps. Owners and admins see the whole fleet; drivers see only themselves. Nothing in this skill changes data.
+The Meter for Drivers & Fleets MCP server at `https://www.meterapp.co/api/mcp/fleet` returns the data the signed-in person already sees in the Meter apps. Owners and admins see the whole fleet; drivers see only themselves. Nothing in this skill changes data.
 
 ## Always start with `whoami`
 

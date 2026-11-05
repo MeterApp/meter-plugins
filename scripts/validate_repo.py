@@ -5,7 +5,11 @@ Runs against this directory in the source repository and, unchanged, against
 the published `MeterApp/meter-plugins` repository, where these files sit at
 the root. Anything that would break an install (a manifest that drifted out
 of sync, a skill missing its Codex interface, a relative path pointing at
-nothing, a credential-shaped string) fails here rather than for a user.
+nothing) fails here rather than for a user. The source repository also runs
+`scripts/ops/scan-meter-plugin.py` before publishing, which keeps secrets and
+sign-in headers out; it is not published, so the plugin carries no
+credential-matching rules a directory scanner could mistake for code that
+reads one.
 """
 
 from __future__ import annotations
@@ -24,7 +28,13 @@ PLUGIN_NAME = "meter"
 # `meterapp-skillhook`.
 MARKETPLACE_NAME = "meterapp-meter"
 ORIGIN = "https://www.meterapp.co"
-MCP_URL = f"{ORIGIN}/api/mcp"
+# Meter serves two MCP servers from one catalog, keyed by their own names.
+MCP_SERVERS = {
+    "meter-fleet": f"{ORIGIN}/api/mcp/fleet",
+    "meter-rides": f"{ORIGIN}/api/mcp/rider",
+}
+# The MCP Registry entry has one remote: Meter for Drivers & Fleets.
+REGISTRY_URL = MCP_SERVERS["meter-fleet"]
 # The source repository is private: a link there 404s for everyone outside the
 # org, and `/plugin marketplace add` of a private repo simply fails. Assembled
 # from parts so this file is not itself a violation.
@@ -39,15 +49,15 @@ SKILLS = [
     "meter-api-explainer",
     "meter-ride",
 ]
-# Skills that tell the agent to call an MCP tool must declare the dependency so
-# Codex can offer to connect the server when the skill is invoked. The
+# Skills that tell the agent to call an MCP tool must declare each server they
+# use so Codex can offer to connect it when the skill is invoked. The
 # explainer reads documentation and must not.
 MCP_DEPENDENT = {
-    "meter-fleet-insights",
-    "meter-fleet-onboarding",
-    "meter-settings-changes",
-    "meter-driver-personal",
-    "meter-ride",
+    "meter-fleet-insights": {"meter-fleet"},
+    "meter-fleet-onboarding": {"meter-fleet"},
+    "meter-settings-changes": {"meter-fleet"},
+    "meter-driver-personal": {"meter-fleet", "meter-rides"},
+    "meter-ride": {"meter-rides"},
 }
 # Skills that teach a write must teach the dry_run preview that comes first.
 WRITE_SKILLS = {"meter-settings-changes", "meter-fleet-onboarding", "meter-ride"}
@@ -171,36 +181,12 @@ if len(agents_plugins) != 1 or agents_plugins[0].get("name") != PLUGIN_NAME:
 
 # --- MCP server ------------------------------------------------------------
 
-server = load_json(".mcp.json").get("mcpServers", {}).get(PLUGIN_NAME, {})
-# OAuth is negotiated by the host from the server's 401 challenge, so the
-# entry is URL-only: a `headers` block would mean someone pasted a credential.
-expected = {"type": "http", "url": MCP_URL}
-if server != expected:
-    error(f".mcp.json must configure the hosted server exactly as {expected}, got {server}")
-
-# Any configured Authorization header disables Claude Code's OAuth sign-in on a
-# directory install, whatever its value, even when the variable it names is
-# unset. Nothing here may configure one, in any manifest or MCP file.
-def authorization_headers(node: object, owner: str) -> None:
-    if isinstance(node, dict):
-        for key, value in node.items():
-            if key == "headers":
-                if isinstance(value, dict):
-                    names = list(value)
-                elif isinstance(value, list):
-                    names = [item.get("name", "") for item in value if isinstance(item, dict)]
-                else:
-                    names = []
-                if any(str(name).lower() == "authorization" for name in names):
-                    error(f"{owner}: an Authorization header disables OAuth sign-in")
-            authorization_headers(value, owner)
-    elif isinstance(node, list):
-        for item in node:
-            authorization_headers(item, owner)
-
-
-for relative in [*MANIFESTS.values(), ".mcp.json", "server.json"]:
-    authorization_headers(load_json(relative), relative)
+servers = load_json(".mcp.json").get("mcpServers", {})
+# OAuth is negotiated by the host from each server's 401 challenge, so every
+# entry is URL-only: any `headers` block would turn that sign-in off.
+expected = {key: {"type": "http", "url": url} for key, url in MCP_SERVERS.items()}
+if servers != expected:
+    error(f".mcp.json must configure the hosted servers exactly as {expected}, got {servers}")
 
 # --- MCP Registry entry ----------------------------------------------------
 
@@ -214,8 +200,8 @@ if registry.get("version") != manifests["claude"].get("version"):
     error("server.json version must match the manifest version")
 if not 1 <= len(registry.get("description", "")) <= 100:
     error("server.json description must be 1-100 characters")
-if registry.get("remotes") != [{"type": "streamable-http", "url": MCP_URL}]:
-    error(f"server.json remotes must be exactly one streamable-http remote at {MCP_URL}")
+if registry.get("remotes") != [{"type": "streamable-http", "url": REGISTRY_URL}]:
+    error(f"server.json remotes must be exactly one streamable-http remote at {REGISTRY_URL}")
 if "packages" in registry:
     error("server.json must not list packages: the server is remote-only")
 for icon in registry.get("icons", []):
@@ -278,8 +264,9 @@ for name in found:
     if f"${name}" not in openai:
         error(f"{name}: default_prompt must mention ${name}")
     if name in MCP_DEPENDENT:
-        if MCP_URL not in openai:
-            error(f"{name}: must declare the hosted MCP dependency")
+        for key in sorted(MCP_DEPENDENT[name]):
+            if f'value: "{key}"' not in openai or MCP_SERVERS[key] not in openai:
+                error(f"{name}: must declare the {key} MCP dependency")
     elif "dependencies:" in openai:
         error(f"{name}: declares an MCP dependency it does not need")
 
@@ -323,39 +310,12 @@ FORBIDDEN = {
     "vercel.app": "a deployment URL (use www.meterapp.co)",
     "https://meterapp.co": "the non-canonical origin (use https://www.meterapp.co)",
     "[TODO": "an unresolved placeholder",
-    "Authorization: Bearer ey": "something shaped like a real token",
-}
-# Anything shaped like a credential. Deliberately broad: a false positive costs
-# a reworded example; a true positive published is a leaked secret.
-SECRET_PATTERNS = {
-    re.compile(r"\beyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}"): "a JWT",
-    re.compile(r"\bsb_(?:secret|publishable)_[A-Za-z0-9_-]{10,}"): "a Supabase API key",
-    re.compile(r"\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}"): "a Stripe key",
-    re.compile(r"\bgh[pousr]_[A-Za-z0-9]{30,}"): "a GitHub token",
-    re.compile(r"\bAKIA[0-9A-Z]{16}\b"): "an AWS access key",
-    re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"): "a Google API key",
-    re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,}"): "a Slack token",
-    re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"): "a private key",
-    re.compile(r"(?i)\b(?:api[_-]?key|secret|password|token)\s*[:=]\s*[\"'][A-Za-z0-9_\-./+]{16,}[\"']"): "an assigned credential",
 }
 # An install or update command that names another marketplace fails for
 # whoever copies it. CHANGELOG.md keeps the old name in its migration notes.
 MARKETPLACE_REFERENCES = (
     re.compile(rf"(?<![\w/@.-]){PLUGIN_NAME}@([a-z0-9][a-z0-9-]*)"),
     re.compile(r"\bmarketplace (?:update|upgrade) ([a-z0-9][a-z0-9-]*)"),
-)
-
-# The Anthropic Directory holds a plugin for review ("Uses a credential from the
-# user's machine") when anything in it reads a key or secret from environment
-# variables or files and sends it on, examples included. An agent uses the
-# connection the host authenticated; the CLI signs in with `meter login`.
-CREDENTIAL_READS = re.compile(
-    r"\$\{?[A-Z][A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD)\b"  # $METER_API_KEY, ${GITHUB_TOKEN}
-    r"|process\.env(?:\.|\[\s*['\"])[A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD)\b"
-    r"|\bos\.(?:environ|getenv)\b"
-    r"|Deno\.env\.get\("
-    r"|import\.meta\.env\.[A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD)\b"
-    r"|\$\{user_config\."  # Meter takes no key, not even an optional one
 )
 
 for path in sorted(ROOT.rglob("*")):
@@ -371,12 +331,6 @@ for path in sorted(ROOT.rglob("*")):
     for needle, label in FORBIDDEN.items():
         if needle in text:
             error(f"{relative}: contains {label}: {needle}")
-    for pattern, label in SECRET_PATTERNS.items():
-        if pattern.search(text):
-            error(f"{relative}: contains {label}")
-    for match in CREDENTIAL_READS.finditer(text):
-        line = text.count("\n", 0, match.start()) + 1
-        error(f"{relative}:{line}: reads a credential from the user's machine: {match.group(0)}")
     if relative != Path("CHANGELOG.md"):
         for pattern in MARKETPLACE_REFERENCES:
             for name in pattern.findall(text):

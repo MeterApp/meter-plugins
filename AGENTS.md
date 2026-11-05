@@ -15,8 +15,8 @@ agent-visible.
 | `.agents/plugins/marketplace.json` | `codex plugin marketplace add MeterApp/meter-plugins` |
 | `.codex-plugin/plugin.json` | `codex plugin add meter@meterapp-meter` (also the directory listing) |
 | `.plugin/plugin.json` | Open Plugins, and anything else that reads the portable schema |
-| `.mcp.json` | Every client: the hosted server. Sign-in is OAuth, handled by the host |
-| `server.json` | The official MCP Registry entry (`co.meterapp/meter`, remote-only); published by a human with `mcp-publisher`, never by CI |
+| `.mcp.json` | Every client: the two hosted servers. Sign-in is OAuth, handled by the host |
+| `server.json` | The official MCP Registry entry (`co.meterapp/meter`, remote-only, Meter for Drivers & Fleets); published by a human with `mcp-publisher`, never by CI |
 | `skills/` | All of the above, and `npx skills add MeterApp/meter-plugins` |
 | `references/` | Deep material the skills link to; `tools.md` and `data-model.md` are generated |
 
@@ -50,9 +50,11 @@ nested plugin directory, which is why one repository serves all supported channe
   generator keeps complete DTO sections in smaller linked parts; the plugin
   validator checks the size budget before publication.
 - **Product facts do not drift.** Tool names, roles and argument names come from
-  the generated references; a skill that quotes them must match. The MCP URL is
-  `https://www.meterapp.co/api/mcp` and every published link uses
-  `https://www.meterapp.co`.
+  the generated references; a skill that quotes them must match. The MCP
+  servers are `https://www.meterapp.co/api/mcp/fleet` (`meter-fleet`, Meter
+  for Drivers & Fleets) and `https://www.meterapp.co/api/mcp/rider`
+  (`meter-rides`, Meter Rides); the combined `/api/mcp` was removed and now
+  answers 410. Every published link uses `https://www.meterapp.co`.
 - **Never link the private source repository.** It 404s for everyone outside
   the org. Link the docs, the generated references, or `hello@meterapp.co`.
 - **Skill frontmatter is `name` and `description` only**, the name matches the
@@ -70,7 +72,13 @@ nested plugin directory, which is why one repository serves all supported channe
   a directory install, whatever its value. The Anthropic Directory holds a
   plugin for review ("Uses a credential from the user's machine") when a skill,
   the README or a config reads a key from an environment variable, a file or a
-  plugin option and sends it on, examples included. The validator enforces both.
+  plugin option and sends it on, examples included. It matched the published
+  validator's own detection rules on 1.4.1, so those rules live in the source
+  repository (`scripts/ops/scan-meter-plugin.py`), which runs them before every
+  publish; keep them out of this directory.
+- **Never pipe a download into an interpreter.** The directory warns on
+  `curl … | sh`-style commands, workflows included: save to a file, then run
+  or parse the file.
 - **Write for the conversation as well as the terminal.** Claude.ai and ChatGPT
   load one skill and have no shell: say which tool to call, what to show the
   person and when to ask first, and keep CLI commands in their own section.
@@ -108,7 +116,7 @@ CODEX_HOME="$(mktemp -d)" codex plugin marketplace add . --json
 npx -y skills@latest add . --list
 ```
 
-CI runs all of these on every push, plus a scheduled check that the hosted MCP
+CI runs all of these on every push, plus a scheduled check that each hosted MCP
 URL in `.mcp.json` still answers with the OAuth challenge.
 
 ## Releasing

@@ -2,7 +2,7 @@
 
 [Meter](https://www.meterapp.co) is the taxi meter and fleet platform: drivers run a meter in the Meter app, fleets manage drivers, vehicles, fares, scheduled bookings and money, and riders book rides from fleets. This plugin gives your agent the view you already have in the Meter apps, through the hosted MCP server, with your own Meter sign-in. One repository, native packaging for each client, plus the vendor-neutral [Open Plugins](https://agent-plugins.org) manifest.
 
-**No API keys.** The first time a tool is used, your agent opens a Meter sign-in in the browser (OAuth 2.1 with PKCE). The token it receives is exactly as powerful as you are: owners and admins see fleet-wide data, drivers and riders see their own.
+**No API keys.** The first time a tool is used, your agent opens a Meter sign-in in the browser (OAuth 2.1 with PKCE). The connection it gets is exactly as powerful as you are: owners and admins see fleet-wide data, drivers and riders see their own.
 
 ## Install
 
@@ -29,7 +29,8 @@ npx skills add MeterApp/meter-plugins
 ### Server only, no skills
 
 ```bash
-claude mcp add --transport http meter https://www.meterapp.co/api/mcp
+claude mcp add --transport http meter-fleet https://www.meterapp.co/api/mcp/fleet
+claude mcp add --transport http meter-rides https://www.meterapp.co/api/mcp/rider
 ```
 
 Start a new session, then try:
@@ -40,7 +41,7 @@ Start a new session, then try:
 
 ### Claude and ChatGPT (no terminal)
 
-Add a custom connector with the URL `https://www.meterapp.co/api/mcp` in the app's connector settings and sign in to Meter when asked. The skills are optional there: the server explains its own tools and asks for a preview and your yes before anything changes.
+Add a custom connector with the URL `https://www.meterapp.co/api/mcp/fleet` (driving or running a fleet) or `https://www.meterapp.co/api/mcp/rider` (booking rides) in the app's connector settings and sign in to Meter when asked. The skills are optional there: the server explains its own tools and asks for a preview and your yes before anything changes.
 
 ### Keep it up to date
 
@@ -65,17 +66,16 @@ Six skills and the hosted MCP server.
 | `meter-driver-personal` | An individual driver's own trips, earnings, pay stubs, availability and profile, and a rider's past rides |
 | `meter-api-explainer` | "How does this work / what does this field mean", and drafting integrations |
 
-The MCP server at `https://www.meterapp.co/api/mcp` provides the tools listed in [references/tools.md](references/tools.md); the objects they return are in [references/data-model.md](references/data-model.md). Both files are generated from the server's own catalog. The server also describes itself: `describe_api` returns a domain index by default; pass `domain` to browse its tools or `tool` for full detail. `explain_data` explains any result field.
+The MCP servers at `https://www.meterapp.co/api/mcp/fleet` (Meter for Drivers & Fleets) and `https://www.meterapp.co/api/mcp/rider` (Meter Rides) provide the tools listed in [references/tools.md](references/tools.md); the objects they return are in [references/data-model.md](references/data-model.md). Both files are generated from the server's own catalog. The server also describes itself: `describe_api` returns a domain index by default; pass `domain` to browse its tools or `tool` for full detail. `explain_data` explains any result field.
 
-## Authentication
+## Sign-in
 
-| Surface | Credential |
+| Surface | How you sign in |
 | --- | --- |
-| Hosted MCP | OAuth 2.1 access token obtained by the host from your Meter sign-in |
-| CLI | `npx @meterapp/meter login` (same sign-in, stored locally); `meter call <tool> --dry-run` previews any write |
-| Browsers, config files, prompts | **Never a token** |
+| Hosted MCP | Your host opens the Meter sign-in (OAuth 2.1) and keeps the connection |
+| Meter CLI (separate package) | `npx @meterapp/meter login`, the same Meter sign-in; `meter call <tool> --dry-run` previews any write |
 
-The host discovers the sign-in from the server's 401 challenge and the metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource`. Nothing in this repository contains or expects a credential. Details in [references/authorization.md](references/authorization.md).
+The host discovers the sign-in from each server's 401 challenge and its metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet` or `…/api/mcp/rider`. The plugin itself holds no key and asks for none: never paste one into a browser, a config file or a prompt. Details in [references/authorization.md](references/authorization.md).
 
 ## Safety model
 
@@ -87,7 +87,7 @@ The host discovers the sign-in from the server's 401 challenge and the metadata 
 
 ## What the plugin sends, and where
 
-Everything goes to one place: the hosted Meter MCP server at `https://www.meterapp.co/api/mcp`, authenticated by your host with your own Meter sign-in. The agent sends the arguments of the tools it calls, which can include addresses you ask it to search or book, ride times and booking ids. Nothing in this plugin reads files, environment variables or credentials from your machine, and nothing is sent anywhere else. How Meter handles that data: [privacy policy](https://www.meterapp.co/privacy). To disconnect, remove the connector in your host or revoke it in Meter under Account, Connected apps.
+Everything goes to Meter's hosted MCP servers, `https://www.meterapp.co/api/mcp/fleet` and `https://www.meterapp.co/api/mcp/rider`, authenticated by your host with your own Meter sign-in. The agent sends the arguments of the tools it calls, which can include addresses you ask it to search or book, ride times and booking ids. The plugin is instructions and two server addresses: it runs no code on your machine, takes no keys, and sends nothing anywhere else. How Meter handles that data: [privacy policy](https://www.meterapp.co/privacy). To disconnect, remove the connector in your host or revoke it in Meter under Account, Connected apps.
 
 ## Development
 
