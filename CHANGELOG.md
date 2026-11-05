@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.3 — 2026-11-05
+
+- The plugin contact address is now jonathan@welcome.meterapp.co in every manifest, the README and the skills.
+
 ## 1.5.2 — 2026-11-05
 
 Wording changes for the directory's automatic sign-in check; nothing about sign-in changed. The plugin still reads nothing from your machine, and your host still signs in to Meter with OAuth.

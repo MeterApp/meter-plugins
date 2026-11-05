@@ -97,11 +97,11 @@ claude plugin validate . --strict
 codex plugin marketplace add . --json
 ```
 
-This repository is published from the Meter source repository. Please open an issue here, or write to [hello@meterapp.co](mailto:hello@meterapp.co), rather than sending a pull request; changes are overwritten on the next release.
+This repository is published from the Meter source repository. Please open an issue here, or write to [jonathan@welcome.meterapp.co](mailto:jonathan@welcome.meterapp.co), rather than sending a pull request; changes are overwritten on the next release.
 
 ## Links
 
-[Docs](https://www.meterapp.co/docs) · [MCP](https://www.meterapp.co/docs/mcp) · [Plugins](https://www.meterapp.co/docs/plugins) · [Book rides](https://www.meterapp.co/docs/rides) · [Privacy and terms](https://www.meterapp.co/privacy) · [MCP Registry entry](server.json) · [agents.md](https://www.meterapp.co/agents.md) · [llms.txt](https://www.meterapp.co/llms.txt) · [openapi-mcp.json](https://www.meterapp.co/openapi-mcp.json) · [hello@meterapp.co](mailto:hello@meterapp.co)
+[Docs](https://www.meterapp.co/docs) · [MCP](https://www.meterapp.co/docs/mcp) · [Plugins](https://www.meterapp.co/docs/plugins) · [Book rides](https://www.meterapp.co/docs/rides) · [Privacy and terms](https://www.meterapp.co/privacy) · [MCP Registry entry](server.json) · [agents.md](https://www.meterapp.co/agents.md) · [llms.txt](https://www.meterapp.co/llms.txt) · [openapi-mcp.json](https://www.meterapp.co/openapi-mcp.json) · [jonathan@welcome.meterapp.co](mailto:jonathan@welcome.meterapp.co)
 
 ## License
 

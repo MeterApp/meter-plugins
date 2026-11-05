@@ -56,7 +56,7 @@ nested plugin directory, which is why one repository serves all supported channe
   (`meter-rides`, Meter Rides); the combined `/api/mcp` was removed and now
   answers 410. Every published link uses `https://www.meterapp.co`.
 - **Never link the private source repository.** It 404s for everyone outside
-  the org. Link the docs, the generated references, or `hello@meterapp.co`.
+  the org. Link the docs, the generated references, or `jonathan@welcome.meterapp.co`.
 - **Skill frontmatter is `name` and `description` only**, the name matches the
   folder, and the description says both when to use the skill *and* when not to;
   that text is the only thing the model routes on. The validator requires at

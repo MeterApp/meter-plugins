@@ -52,7 +52,7 @@ The access grant carries the person's own permissions: owners and admins see fle
 ## Boundaries
 
 - This skill explains; it does not run fleet queries or make changes. Hand over to the other Meter skills for that.
-- Do not invent tools, arguments or fields. If a question cannot be answered from `describe_api`, `explain_data` or the published files, say so and suggest `hello@meterapp.co`.
+- Do not invent tools, arguments or fields. If a question cannot be answered from `describe_api`, `explain_data` or the published files, say so and suggest `jonathan@welcome.meterapp.co`.
 
 ## References
 

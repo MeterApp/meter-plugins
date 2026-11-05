@@ -26,4 +26,4 @@ These rules apply to every Meter skill. They exist because the data is a busines
 
 ## When in doubt
 
-Ask `describe_api` and `explain_data`, read `https://www.meterapp.co/llms-full.txt`, or tell the human what you could not verify and suggest `hello@meterapp.co`.
+Ask `describe_api` and `explain_data`, read `https://www.meterapp.co/llms-full.txt`, or tell the human what you could not verify and suggest `jonathan@welcome.meterapp.co`.
