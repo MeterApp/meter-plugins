@@ -1248,7 +1248,7 @@ Use dry_run to preview, then confirm an immediately public page with an exact ti
 | `name` | string | yes |  | Complete public page title. Changing it alone preserves the exact slug. |
 | `slug` | string | yes |  | Exact lowercase URL segment; no alternate slug is selected. |
 | `content` | string \| null | no | `null` | Complete Markdown body up to 4000 characters; omitted means null and is shown explicitly in the preview. |
-| `external_url` | string (uri) \| null | no | `null` | HTTP(S) external destination without credentials; omitted means null and is shown explicitly in the preview. |
+| `external_url` | string (uri) \| null | no | `null` | HTTP(S) external destination with no username or password in it; omitted means null and is shown explicitly in the preview. |
 
 Example:
 

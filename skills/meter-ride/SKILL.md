@@ -122,7 +122,7 @@ Never say a refund or a charge has gone through; say the ride is cancelled and t
 
 | Code | Means | Do |
 | --- | --- | --- |
-| `unauthenticated` | Not signed in, or the sign-in expired | Ask the person to connect Meter again in their app's connector settings (or `/mcp` in Claude Code). Never ask for a password or token |
+| `unauthenticated` | Not signed in, or the sign-in expired | Ask the person to connect Meter again in their app's connector settings (or `/mcp` in Claude Code). Never ask for a password or a code |
 | `forbidden` | This person cannot do that | Stop. Do not retry with another fleet or booking id |
 | `not_found` | A fleet, place or booking that is not theirs or does not exist | Take ids from earlier results; ask the person |
 | `402` / payment required | A payment step is needed | The checkout or `add_payment_method` link, as in step 7 |

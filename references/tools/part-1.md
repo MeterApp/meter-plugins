@@ -209,7 +209,7 @@ Example:
 
 **List trip invoices** · servers: `fleet` · personas: `solo_driver, fleet_owner, fleet_admin` · read-only · returns `TripInvoicePage`
 
-List your personal trip invoices, or an explicitly selected operational fleet's invoices as its owner/admin. Native cursor pagination and saved statuses; no payment tokens, provider identifiers or payer contact details. This does not create, send or pay an invoice.
+List your personal trip invoices, or an explicitly selected operational fleet's invoices as its owner/admin. Native cursor pagination and saved statuses; no stored payment details, provider identifiers or payer contact details. This does not create, send or pay an invoice.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -229,7 +229,7 @@ Example:
 
 **Get trip invoice** · servers: `fleet` · personas: `solo_driver, fleet_owner, fleet_admin` · read-only · returns `TripInvoiceDetail`
 
-Read an invoice you own personally, or one belonging to an explicitly selected operational fleet you own/administer. Returns saved amounts and up to 50 lines; lines_complete=false requires the Meter invoice screen for all lines. No location routes, payer contacts, payment tokens, provider identifiers, raw events or delivery errors. Saved status does not prove a new payment or delivery.
+Read an invoice you own personally, or one belonging to an explicitly selected operational fleet you own/administer. Returns saved amounts and up to 50 lines; lines_complete=false requires the Meter invoice screen for all lines. No location routes, payer contacts, stored payment details, provider identifiers, raw events or delivery errors. Saved status does not prove a new payment or delivery.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -513,7 +513,7 @@ Example:
 
 **List my assistant changes** · servers: `rider + fleet` · personas: `solo_driver, fleet_driver, fleet_admin, fleet_owner, rider` · read-only · returns `ChangeRequestPage`
 
-Read the signed-in person’s assistant change history. Filter by exact proposal id, status, tool, or creation time; use the returned cursor for older entries. Fleet owners cannot read another person’s assistant history. Returns previewed field changes and safe outcome metadata, never stored tool input, private tokens, raw results or internal errors. This read does not confirm or repeat a change.
+Read the signed-in person’s assistant change history. Filter by exact proposal id, status, tool, or creation time; use the returned cursor for older entries. Fleet owners cannot read another person’s assistant history. Returns previewed field changes and safe outcome metadata, never stored tool input, internal identifiers, raw results or internal errors. This read does not confirm or repeat a change.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |

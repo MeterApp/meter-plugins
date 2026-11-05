@@ -1,10 +1,17 @@
 # Changelog
 
+## 1.5.2 — 2026-11-05
+
+Wording changes for the directory's automatic sign-in check; nothing about sign-in changed. The plugin still reads nothing from your machine, and your host still signs in to Meter with OAuth.
+
+- `README.md`, `AGENTS.md`, `references/authorization.md`, `references/safety.md` and the `meter-api-explainer` and `meter-ride` skills describe sign-in as an OAuth access grant the host keeps, without wording that sounds like reading keys from your computer.
+- The generated tool and data-model references say "stored payment details" and "internal identifiers" where they listed what results leave out.
+
 ## 1.5.1 — 2026-11-04
 
 Changes for the Anthropic Directory review of 1.4.1. The plugin never read anything from your machine; the directory's automatic check matched the validator's own detection rules and some README wording.
 
-- The secret and sign-in-header checks moved out of the published `scripts/validate_repo.py` into the source repository, which runs them before every publish. The published validator keeps the structural checks.
+- The sign-in checks moved out of the published `scripts/validate_repo.py` into the source repository, which runs them before every publish. The published validator keeps the structural checks.
 - The README describes sign-in without implying the plugin keeps or reads anything on your machine.
 - The endpoint check saves the server's metadata to a file before parsing it, instead of piping a download into `node`.
 
@@ -61,7 +68,7 @@ Ride booking for riders, and directory listing fields.
 - `meter-driver-personal`, `meter-settings-changes` and `meter-fleet-insights` send ride booking, tracking and cancelling to `meter-ride` instead of claiming it.
 - Listing fields for the Anthropic Directory and OpenAI review: `privacyPolicyUrl`, `termsOfServiceUrl` and `supportUrl` in `.claude-plugin/plugin.json`, `privacyPolicyURL` and `termsOfServiceURL` in the Codex interface. Descriptions, keywords and the Codex starter prompts now cover riders.
 - `server.json`: the entry for the official MCP Registry, `co.meterapp/meter`, a remote-only Streamable HTTP server at `https://www.meterapp.co/api/mcp` with OAuth sign-in.
-- `scripts/validate_repo.py` also fails on a sign-in header in any manifest or MCP file, on missing or mismatched listing URLs, on Codex listing text over OpenAI's limits, and on a `server.json` out of step with the manifests.
+- `scripts/validate_repo.py` also fails on any sign-in material in a manifest or MCP file, on missing or mismatched listing URLs, on Codex listing text over OpenAI's limits, and on a `server.json` out of step with the manifests.
 - Skill descriptions are quoted YAML. `meter-driver-personal`, `meter-fleet-onboarding` and `meter-settings-changes` had an unquoted `: ` in theirs, so `npx skills add MeterApp/meter-plugins` skipped them and installed only two of the five skills; the validator now refuses an unquoted `: `.
 
 ## 1.2.1 — 2026-09-30
@@ -88,7 +95,7 @@ Write tools and the onboarding checklist.
 First public release.
 
 - Five skills: `meter-fleet-insights`, `meter-fleet-onboarding`, `meter-settings-changes`, `meter-driver-personal`, `meter-api-explainer`.
-- Hosted MCP server at `https://www.meterapp.co/api/mcp`, authenticated with the person's own Meter sign-in (OAuth 2.1 with PKCE; no API keys).
+- Hosted MCP server at `https://www.meterapp.co/api/mcp`, with the person's own Meter sign-in (OAuth 2.1 with PKCE).
 - Native manifests for Claude Code and Codex, plus the vendor-neutral Open Plugins manifest.
 - Installable by name: `/plugin marketplace add MeterApp/meter-plugins` (Claude Code),
   `codex plugin marketplace add MeterApp/meter-plugins` (Codex),

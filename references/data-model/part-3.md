@@ -231,7 +231,7 @@ Saved quote lifecycle confirmation and immutable committed outcome; no booking o
 | `action.notification_state` | enum |  | everyone | Processing state only; does not prove provider acceptance or rider delivery. Started or uncertain attempts are not automatically resent. Values: `not_required`, `queued`, `completed`, `manual_handoff`, `superseded`. |
 ## QuoteSummary
 
-An authorized stored quote summary, excluding contact details, notes, preview/receipt internals, delivery tokens and conversion leases.
+An authorized stored quote summary, excluding contact details, notes, preview/receipt internals, private delivery links and conversion leases.
 
 | Field | Type | Unit | Visible to | Description |
 | --- | --- | --- | --- | --- |
@@ -323,7 +323,7 @@ Saved quote creation or pricing preview and immutable committed outcome; does no
 | `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
 | `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
 | `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
-| `quote` | object |  | everyone | An authorized stored quote summary, excluding contact details, notes, preview/receipt internals, delivery tokens and conversion leases. |
+| `quote` | object |  | everyone | An authorized stored quote summary, excluding contact details, notes, preview/receipt internals, private delivery links and conversion leases. |
 | `quote.id` | string |  | everyone | Meter quote identifier. |
 | `quote.fleet_id` | string\|null |  | everyone | Owning fleet, or null for an individually owned quote. |
 | `quote.status` | enum |  | everyone | Stored quote status; converted means a booking was created. Values: `draft`, `open`, `converted`, `declined`, `expired`, `withdrawn`. |
@@ -448,7 +448,7 @@ Human continuation in Meter. Issuing a link never purchases, pays, refunds, or d
 | `why_handoff` | string |  | everyone | Why the human must finish this action and whether it needs the store or Meter support. |
 ## ChangeRequest
 
-An actor-owned change history entry. Never includes stored input, basis, result, or private completion tokens.
+An actor-owned change history entry. Never includes stored input, basis, result, or internal completion identifiers.
 
 | Field | Type | Unit | Visible to | Description |
 | --- | --- | --- | --- | --- |

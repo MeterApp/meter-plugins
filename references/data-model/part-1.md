@@ -234,7 +234,7 @@ One authorized page of personal or fleet trip invoices.
 | `has_more` | boolean |  | everyone | Whether another native page is available. |
 ## TripInvoiceDetail
 
-Authorized invoice amounts and bounded lines without tokens, provider identifiers, contacts, raw events or notification errors.
+Authorized invoice amounts and bounded lines without stored payment details, provider identifiers, contacts, raw events or notification errors.
 
 | Field | Type | Unit | Visible to | Description |
 | --- | --- | --- | --- | --- |

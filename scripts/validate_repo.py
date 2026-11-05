@@ -8,8 +8,8 @@ of sync, a skill missing its Codex interface, a relative path pointing at
 nothing) fails here rather than for a user. The source repository also runs
 `scripts/ops/scan-meter-plugin.py` before publishing, which keeps secrets and
 sign-in headers out; it is not published, so the plugin carries no
-credential-matching rules a directory scanner could mistake for code that
-reads one.
+sign-in matching rules a directory scanner could mistake for code that
+reads from the machine.
 """
 
 from __future__ import annotations

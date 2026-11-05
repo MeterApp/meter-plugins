@@ -2,7 +2,7 @@
 
 [Meter](https://www.meterapp.co) is the taxi meter and fleet platform: drivers run a meter in the Meter app, fleets manage drivers, vehicles, fares, scheduled bookings and money, and riders book rides from fleets. This plugin gives your agent the view you already have in the Meter apps, through the hosted MCP server, with your own Meter sign-in. One repository, native packaging for each client, plus the vendor-neutral [Open Plugins](https://agent-plugins.org) manifest.
 
-**No API keys.** The first time a tool is used, your agent opens a Meter sign-in in the browser (OAuth 2.1 with PKCE). The connection it gets is exactly as powerful as you are: owners and admins see fleet-wide data, drivers and riders see their own.
+**Sign in with your Meter account.** The first time a tool is used, your agent opens a Meter sign-in in the browser (OAuth 2.1 with PKCE). The connection it gets is exactly as powerful as you are: owners and admins see fleet-wide data, drivers and riders see their own.
 
 ## Install
 
@@ -75,7 +75,7 @@ The MCP servers at `https://www.meterapp.co/api/mcp/fleet` (Meter for Drivers & 
 | Hosted MCP | Your host opens the Meter sign-in (OAuth 2.1) and keeps the connection |
 | Meter CLI (separate package) | `npx @meterapp/meter login`, the same Meter sign-in; `meter call <tool> --dry-run` previews any write |
 
-The host discovers the sign-in from each server's 401 challenge and its metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet` or `…/api/mcp/rider`. The plugin itself holds no key and asks for none: never paste one into a browser, a config file or a prompt. Details in [references/authorization.md](references/authorization.md).
+The host discovers the sign-in from each server's 401 challenge and its metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet` or `…/api/mcp/rider`. The plugin itself asks you for nothing: you only ever sign in on meterapp.co. Details in [references/authorization.md](references/authorization.md).
 
 ## Safety model
 
@@ -87,7 +87,7 @@ The host discovers the sign-in from each server's 401 challenge and its metadata
 
 ## What the plugin sends, and where
 
-Everything goes to Meter's hosted MCP servers, `https://www.meterapp.co/api/mcp/fleet` and `https://www.meterapp.co/api/mcp/rider`, authenticated by your host with your own Meter sign-in. The agent sends the arguments of the tools it calls, which can include addresses you ask it to search or book, ride times and booking ids. The plugin is instructions and two server addresses: it runs no code on your machine, takes no keys, and sends nothing anywhere else. How Meter handles that data: [privacy policy](https://www.meterapp.co/privacy). To disconnect, remove the connector in your host or revoke it in Meter under Account, Connected apps.
+Everything goes to Meter's hosted MCP servers, `https://www.meterapp.co/api/mcp/fleet` and `https://www.meterapp.co/api/mcp/rider`, authenticated by your host with your own Meter sign-in. The agent sends the arguments of the tools it calls, which can include addresses you ask it to search or book, ride times and booking ids. The plugin is instructions and two server addresses: it runs no code on your machine and sends nothing anywhere else. How Meter handles that data: [privacy policy](https://www.meterapp.co/privacy). To disconnect, remove the connector in your host or revoke it in Meter under Account, Connected apps.
 
 ## Development
 

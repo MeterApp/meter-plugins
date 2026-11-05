@@ -19,9 +19,9 @@ These rules apply to every Meter skill. They exist because the data is a busines
 10. **Fares and payout fractions are money.** Always state old and new values with the currency. Never change them in a batch the human did not enumerate, and never invent market rates.
 11. **One target at a time.** Several fleets or several ride options mean several dry-run and confirm cycles.
 
-## Credentials
+## Sign-in
 
-12. **No tokens anywhere.** Not in prompts, files, URLs, tool arguments, screenshots or bug reports. On `unauthenticated`, the human reconnects the connector in their host; you do not ask for a token.
+12. **Sign-in stays with the host.** Never put sign-in material in prompts, files, URLs, tool arguments, screenshots or bug reports. On `unauthenticated`, the human reconnects the connector in their host; you never ask them for a password or a code.
 13. **Nothing to buy or subscribe to.** No tool changes billing. Billing and payout accounts are set up by the human in the web console.
 
 ## When in doubt

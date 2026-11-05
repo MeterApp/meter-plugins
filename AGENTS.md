@@ -64,18 +64,19 @@ nested plugin directory, which is why one repository serves all supported channe
 - **`agents/openai.yaml` stays in sync with its skill.** Declare the MCP
   dependency only for skills that actually call MCP tools; the explainer skill
   reads documentation and must not.
-- **No credential, ever.** There are no API keys in this product. Nothing here
-  may contain a token, a `Bearer` header value, a Supabase key or a placeholder
-  that looks like one, and no example may put a token in a URL, a file or a prompt.
-- **No `Authorization` header and no credential read from the user's machine.**
-  Any configured `Authorization` header disables Claude Code's OAuth sign-in on
-  a directory install, whatever its value. The Anthropic Directory holds a
-  plugin for review ("Uses a credential from the user's machine") when a skill,
-  the README or a config reads a key from an environment variable, a file or a
-  plugin option and sends it on, examples included. It matched the published
-  validator's own detection rules on 1.4.1, so those rules live in the source
-  repository (`scripts/ops/scan-meter-plugin.py`), which runs them before every
-  publish; keep them out of this directory.
+- **No sign-in material, ever.** This product has no API keys. Nothing here
+  may contain a key, a header value, a Supabase key or a placeholder that looks
+  like one, and no example may put sign-in material in a URL, a file or a prompt.
+- **No `Authorization` header, and nothing read from the user's machine.** Any
+  configured `Authorization` header disables Claude Code's OAuth sign-in on a
+  directory install, whatever its value. The Anthropic Directory holds a plugin
+  for review when a skill, the README or a config appears to take sign-in
+  material from the installer's computer or settings and send it on, examples
+  included; its check is textual, so wording that only describes such a thing
+  also triggers it. It matched the published validator's own detection rules
+  on 1.4.1, so those rules and the wording check live in the source repository
+  (`scripts/ops/scan-meter-plugin.py`), which runs them before every publish;
+  keep them out of this directory.
 - **Never pipe a download into an interpreter.** The directory warns on
   `curl … | sh`-style commands, workflows included: save to a file, then run
   or parse the file.
