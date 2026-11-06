@@ -1,0 +1,49 @@
+{
+  "name": "meter-fleet",
+  "version": "2.0.0",
+  "description": "Meter for Drivers & Fleets, the taxi meter and fleet platform for AI agents. Ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting, see a driver's own trips and pay stubs, guide a new fleet through onboarding, and change settings with a dry run and your confirmation. Signs in with your Meter account in the browser.",
+  "author": {
+    "name": "Meter",
+    "email": "jonathan@welcome.meterapp.co",
+    "url": "https://www.meterapp.co"
+  },
+  "homepage": "https://www.meterapp.co/docs/plugins",
+  "repository": "https://github.com/MeterApp/meter-plugins",
+  "license": "MIT",
+  "keywords": [
+    "meter",
+    "taxi",
+    "fleet",
+    "driver",
+    "dispatch",
+    "bookings",
+    "earnings",
+    "accounting",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Meter for Drivers & Fleets",
+    "shortDescription": "Drive or run a taxi fleet",
+    "longDescription": "Meter is the taxi meter and fleet platform: drivers run a meter in the Meter app, and fleets manage drivers, vehicles, fares, scheduled bookings and money. This plugin connects your agent to the hosted Meter for Drivers & Fleets MCP server with your own Meter sign-in, so it sees exactly what you see. Fleet owners get answers about trips, bookings, drivers, vehicles, earnings and accounting, a guided onboarding, and settings changes that apply only after a dry run and their confirmation. Drivers see their own trips and pay stubs and update their own availability and profile.",
+    "developerName": "Meter",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.meterapp.co",
+    "defaultPrompt": [
+      "How much did my fleet earn last week, and which driver had the most trips?",
+      "Which bookings are still unassigned for tomorrow morning?",
+      "Show me my own trips and card payouts for last week."
+    ],
+    "brandColor": "#106A57",
+    "composerIcon": "./assets/logo.svg",
+    "logo": "./assets/logo.svg",
+    "supportURL": "https://www.meterapp.co/docs/plugins",
+    "privacyPolicyURL": "https://www.meterapp.co/privacy",
+    "termsOfServiceURL": "https://www.meterapp.co/privacy"
+  }
+}

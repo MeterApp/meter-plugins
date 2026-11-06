@@ -1,0 +1,27 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "co.meterapp/meter-rides",
+  "title": "Meter Rides",
+  "description": "Book taxi rides with Meter fleets: price, request, track and manage your own rides.",
+  "version": "2.0.0",
+  "websiteUrl": "https://www.meterapp.co/docs/rides",
+  "repository": {
+    "url": "https://github.com/MeterApp/meter-plugins",
+    "source": "github"
+  },
+  "icons": [
+    {
+      "src": "https://www.meterapp.co/meter-logo.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "1024x1024"
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://www.meterapp.co/api/mcp/rider"
+    }
+  ]
+}

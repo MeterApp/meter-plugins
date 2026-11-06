@@ -6,12 +6,18 @@
     "email": "jonathan@welcome.meterapp.co",
     "url": "https://www.meterapp.co"
   },
-  "description": "Plugins by Meter. Meter: the taxi meter and fleet platform, for AI agents. Ride booking for riders, fleet insights, onboarding, safe settings changes and driver self-service over the hosted MCP server.",
+  "description": "Plugins by Meter, the taxi meter and fleet platform: Meter for Drivers & Fleets and Meter Rides, one plugin per hosted MCP server.",
   "plugins": [
     {
-      "name": "meter",
-      "source": "./",
-      "description": "Give your agent the signed-in person's view of Meter: book and track your own rides with a preview and your confirmation, plus fleets, trips, bookings, drivers, vehicles, earnings and accounting and confirmable settings changes. Six skills plus the hosted MCP server with OAuth sign-in; no API keys.",
+      "name": "meter-fleet",
+      "source": "./fleet",
+      "description": "See your fleet's trips, bookings, drivers, vehicles, earnings and accounting, or a driver's own trips and pay, and change settings with a preview and your confirmation. Five skills plus the hosted Meter for Drivers & Fleets server; sign in with your Meter account.",
+      "category": "productivity"
+    },
+    {
+      "name": "meter-rides",
+      "source": "./rides",
+      "description": "Book, follow and cancel your own taxi rides with a price preview and your confirmation, paid on Meter's checkout page, never in the chat. Two skills plus the hosted Meter Rides server; sign in with your Meter account.",
       "category": "productivity"
     }
   ]

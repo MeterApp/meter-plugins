@@ -1,0 +1,13 @@
+interface:
+  display_name: "Meter Rider Personal"
+  short_description: "Your past rides, quotes and ride problems"
+  default_prompt: "Use $meter-rider-personal to look back at my past rides or quotes in Meter."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "meter-rides"
+      description: "Meter Rides hosted MCP server (OAuth sign-in)"
+      transport: "streamable_http"
+      url: "https://www.meterapp.co/api/mcp/rider"
+policy:
+  allow_implicit_invocation: true
