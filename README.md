@@ -1,8 +1,13 @@
-# Meter — plugin for Claude Code and Codex
+# Meter plugins for Claude Code and Codex
 
-[Meter](https://www.meterapp.co) is the taxi meter and fleet platform: drivers run a meter in the Meter app, fleets manage drivers, vehicles, fares, scheduled bookings and money, and riders book rides from fleets. This plugin gives your agent the view you already have in the Meter apps, through the hosted MCP server, with your own Meter sign-in. One repository, native packaging for each client, plus the vendor-neutral [Open Plugins](https://agent-plugins.org) manifest.
+[Meter](https://www.meterapp.co) is the taxi meter and fleet platform. This repository is a marketplace with two plugins, one for each of Meter's hosted MCP servers. Each plugin has native packaging for each client, plus the vendor-neutral [Open Plugins](https://agent-plugins.org) manifest.
 
-**Sign in with your Meter account.** The first time a tool is used, your agent opens a Meter sign-in in the browser (OAuth 2.1 with PKCE). The connection it gets is exactly as powerful as you are: owners and admins see fleet-wide data, drivers and riders see their own.
+| Plugin | For | Server | Folder |
+| --- | --- | --- | --- |
+| **Meter for Drivers & Fleets** (`meter-fleet`) | Drivers and fleet owners: trips, bookings, drivers, vehicles, earnings, accounting, onboarding and settings | `https://www.meterapp.co/api/mcp/fleet` | [fleet](fleet/README.md) |
+| **Meter Rides** (`meter-rides`) | Riders: book, follow and cancel your own taxi rides, and look back at them | `https://www.meterapp.co/api/mcp/rider` | [rides](rides/README.md) |
+
+Sign in with your Meter account the first time a tool is used. Your agent then sees exactly what you see in the Meter apps.
 
 ## Install
 
@@ -10,15 +15,19 @@
 
 ```text
 /plugin marketplace add MeterApp/meter-plugins
-/plugin install meter@meterapp-meter
+/plugin install meter-fleet@meterapp-meter
+/plugin install meter-rides@meterapp-meter
 ```
 
 ### Codex
 
 ```bash
 codex plugin marketplace add MeterApp/meter-plugins
-codex plugin add meter@meterapp-meter
+codex plugin add meter-fleet@meterapp-meter
+codex plugin add meter-rides@meterapp-meter
 ```
+
+Install the one you need, or both.
 
 ### Skills only, any agent
 
@@ -26,82 +35,25 @@ codex plugin add meter@meterapp-meter
 npx skills add MeterApp/meter-plugins
 ```
 
-### Server only, no skills
-
-```bash
-claude mcp add --transport http meter-fleet https://www.meterapp.co/api/mcp/fleet
-claude mcp add --transport http meter-rides https://www.meterapp.co/api/mcp/rider
-```
-
-Start a new session, then try:
-
-> "How much did my fleet earn last week, and which driver had the most trips?"
-
-> "Book me a ride to the airport at 6am with my usual taxi company."
-
 ### Claude and ChatGPT (no terminal)
 
-Add a custom connector with the URL `https://www.meterapp.co/api/mcp/fleet` (driving or running a fleet) or `https://www.meterapp.co/api/mcp/rider` (booking rides) in the app's connector settings and sign in to Meter when asked. The skills are optional there: the server explains its own tools and asks for a preview and your yes before anything changes.
+Add a connector with one of the server URLs above in the app's connector settings and sign in to Meter when asked.
 
-### Keep it up to date
+### Moving from the `meter` plugin
 
-- **Claude Code** updates the plugin by itself at startup once auto-update is on for its marketplace, which Claude Code leaves off for marketplaces outside Anthropic's: open `/plugin`, go to **Marketplaces**, choose `meterapp-meter` and select **Enable auto-update**. By hand: `/plugin marketplace update meterapp-meter`, then `/plugin update meter@meterapp-meter`, then restart (or `/reload-plugins`).
-- **Codex:** `codex plugin marketplace upgrade meterapp-meter`.
-- **Skills only:** `npx skills update`.
-
-Added this marketplace before 1.4.0, when it was called `meterapp`? [CHANGELOG.md](CHANGELOG.md) shows how to move your install to the new name.
-
-The CLI, `@meterapp/meter`, installs its own new versions in the background, and `meter update` updates it now and refreshes this plugin wherever Claude Code or Codex has it installed.
-
-## What you get
-
-Six skills and the hosted MCP server.
-
-| Skill | Job |
-| --- | --- |
-| `meter-ride` | Booking, following and cancelling your own taxi ride: confirmed addresses, the price first, your yes before booking |
-| `meter-fleet-insights` | Questions about a fleet's trips, bookings, drivers, vehicles, earnings and accounting |
-| `meter-fleet-onboarding` | Walking a new fleet owner through setup with the onboarding checklist and settings tools |
-| `meter-settings-changes` | Changing fleet, booking, ride-option or personal settings: dry run, confirm, apply |
-| `meter-driver-personal` | An individual driver's own trips, earnings, pay stubs, availability and profile, and a rider's past rides |
-| `meter-api-explainer` | "How does this work / what does this field mean", and drafting integrations |
-
-The MCP servers at `https://www.meterapp.co/api/mcp/fleet` (Meter for Drivers & Fleets) and `https://www.meterapp.co/api/mcp/rider` (Meter Rides) provide the tools listed in [references/tools.md](references/tools.md); the objects they return are in [references/data-model.md](references/data-model.md). Both files are generated from the server's own catalog. The server also describes itself: `describe_api` returns a domain index by default; pass `domain` to browse its tools or `tool` for full detail. `explain_data` explains any result field.
-
-## Sign-in
-
-| Surface | How you sign in |
-| --- | --- |
-| Hosted MCP | Your host opens the Meter sign-in (OAuth 2.1) and keeps the connection |
-| Meter CLI (separate package) | `npx @meterapp/meter login`, the same Meter sign-in; `meter call <tool> --dry-run` previews any write |
-
-The host discovers the sign-in from each server's 401 challenge and its metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet` or `…/api/mcp/rider`. The plugin itself asks you for nothing: you only ever sign in on meterapp.co. Details in [references/authorization.md](references/authorization.md).
-
-## Safety model
-
-- Read first, ask second. `whoami` tells the agent who is signed in and which fleets and roles they have; ids come from results, never from guesses.
-- Every settings change is a dry run first. `dry_run` defaults to false, so the agent passes `dry_run: true`, shows the exact `changes` (`field`, `from`, `to`), waits for an explicit yes, then repeats the call to apply. Fares are never changed without stating the from and to values.
-- A permission error is final for that person. The agent switches to a tool that fits their role instead of retrying.
-- Results never contain payment-provider ids, GPS traces, internal notes or other people's contact details beyond what the role allows. See [references/safety.md](references/safety.md).
-- Rides are booked only for the signed-in rider, only after a preview of the price, pickup time, payment and cancellation policy, and only on an explicit yes. Nothing is paid in the chat: when a ride needs paying for, the agent gives you a Meter checkout link (valid about 30 minutes, only for you) and the ride is booked once you have paid on meterapp.co; it then checks the booking before saying so. Rides the company takes payment for after the trip, and free rides, are booked in the chat. The agent never asks for or types card details. Cancelling shows the fee first.
-
-## What the plugin sends, and where
-
-Everything goes to Meter's hosted MCP servers, `https://www.meterapp.co/api/mcp/fleet` and `https://www.meterapp.co/api/mcp/rider`, authenticated by your host with your own Meter sign-in. The agent sends the arguments of the tools it calls, which can include addresses you ask it to search or book, ride times and booking ids. The plugin is instructions and two server addresses: it runs no code on your machine and sends nothing anywhere else. How Meter handles that data: [privacy policy](https://www.meterapp.co/privacy). To disconnect, remove the connector in your host or revoke it in Meter under Account, Connected apps.
+Before 2.0.0 this repository offered one plugin, `meter`, with both servers. Uninstall it and install one or both of the plugins above; [the changelog](fleet/CHANGELOG.md) has the commands.
 
 ## Development
 
 ```bash
 python3 scripts/validate_repo.py
+python3 scripts/check_endpoint.py
 claude plugin validate . --strict
-codex plugin marketplace add . --json
+claude plugin validate ./fleet --strict
+claude plugin validate ./rides --strict
 ```
 
 This repository is published from the Meter source repository. Please open an issue here, or write to [jonathan@welcome.meterapp.co](mailto:jonathan@welcome.meterapp.co), rather than sending a pull request; changes are overwritten on the next release.
-
-## Links
-
-[Docs](https://www.meterapp.co/docs) · [MCP](https://www.meterapp.co/docs/mcp) · [Plugins](https://www.meterapp.co/docs/plugins) · [Book rides](https://www.meterapp.co/docs/rides) · [Privacy and terms](https://www.meterapp.co/privacy) · [MCP Registry entry](server.json) · [agents.md](https://www.meterapp.co/agents.md) · [llms.txt](https://www.meterapp.co/llms.txt) · [openapi-mcp.json](https://www.meterapp.co/openapi-mcp.json) · [jonathan@welcome.meterapp.co](mailto:jonathan@welcome.meterapp.co)
 
 ## License
 

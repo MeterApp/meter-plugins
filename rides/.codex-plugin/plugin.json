@@ -1,0 +1,47 @@
+{
+  "name": "meter-rides",
+  "version": "2.0.0",
+  "description": "Meter Rides, booking taxi rides with local companies for AI agents. Find your taxi company, confirm the addresses, see the price first and book only after your yes. Pay on Meter's own checkout page, never in the chat. Follow the driver, cancel with the fee shown first, and look back at your past rides and quotes. Signs in with your Meter account in the browser.",
+  "author": {
+    "name": "Meter",
+    "email": "jonathan@welcome.meterapp.co",
+    "url": "https://www.meterapp.co"
+  },
+  "homepage": "https://www.meterapp.co/docs/plugins",
+  "repository": "https://github.com/MeterApp/meter-plugins",
+  "license": "MIT",
+  "keywords": [
+    "meter",
+    "taxi",
+    "rides",
+    "rider",
+    "booking",
+    "tracking",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Meter Rides",
+    "shortDescription": "Book and track your taxi rides",
+    "longDescription": "Meter Rides books rides from local taxi companies that use Meter. This plugin connects your agent to the hosted Meter Rides MCP server with your own Meter sign-in, so it acts only for you. Book a ride with your usual company, see the price first and confirm before anything is booked, pay on Meter's own checkout page rather than in the chat, follow the driver and cancel with the fee shown up front. Look back at your past rides, answer the quotes a company sends you, rate a ride and report a problem. The agent never handles card details.",
+    "developerName": "Meter",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.meterapp.co",
+    "defaultPrompt": [
+      "Book me a ride to the airport at 6am with my usual taxi company.",
+      "Where is my driver?",
+      "What did I pay for my last ride?"
+    ],
+    "brandColor": "#106A57",
+    "composerIcon": "./assets/logo.svg",
+    "logo": "./assets/logo.svg",
+    "supportURL": "https://www.meterapp.co/docs/plugins",
+    "privacyPolicyURL": "https://www.meterapp.co/privacy",
+    "termsOfServiceURL": "https://www.meterapp.co/privacy"
+  }
+}

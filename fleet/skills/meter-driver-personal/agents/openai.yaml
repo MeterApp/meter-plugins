@@ -1,0 +1,13 @@
+interface:
+  display_name: "Meter Driver Personal"
+  short_description: "Your own trips, earnings, pay stubs and profile"
+  default_prompt: "Use $meter-driver-personal to look at my own trips, earnings or profile in Meter."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "meter-fleet"
+      description: "Meter for Drivers & Fleets hosted MCP server (OAuth sign-in)"
+      transport: "streamable_http"
+      url: "https://www.meterapp.co/api/mcp/fleet"
+policy:
+  allow_implicit_invocation: true

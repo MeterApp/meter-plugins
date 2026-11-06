@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "meter-fleet",
+  "displayName": "Meter for Drivers & Fleets",
+  "version": "2.0.0",
+  "description": "Meter for Drivers & Fleets, the taxi meter and fleet platform for AI agents. Ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting, see a driver's own trips and pay stubs, guide a new fleet through onboarding, and change settings with a dry run and your confirmation. Signs in with your Meter account in the browser.",
+  "author": {
+    "name": "Meter",
+    "email": "jonathan@welcome.meterapp.co",
+    "url": "https://www.meterapp.co"
+  },
+  "homepage": "https://www.meterapp.co/docs/plugins",
+  "repository": "https://github.com/MeterApp/meter-plugins",
+  "license": "MIT",
+  "privacyPolicyUrl": "https://www.meterapp.co/privacy",
+  "termsOfServiceUrl": "https://www.meterapp.co/privacy",
+  "supportUrl": "https://www.meterapp.co/docs/plugins",
+  "keywords": [
+    "meter",
+    "taxi",
+    "fleet",
+    "driver",
+    "dispatch",
+    "bookings",
+    "earnings",
+    "accounting",
+    "mcp"
+  ]
+}

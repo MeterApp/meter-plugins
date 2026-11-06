@@ -5,9 +5,27 @@
   },
   "plugins": [
     {
-      "name": "meter",
-      "source": { "source": "local", "path": "./" },
-      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "name": "meter-fleet",
+      "source": {
+        "source": "local",
+        "path": "./fleet"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "meter-rides",
+      "source": {
+        "source": "local",
+        "path": "./rides"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
       "category": "Productivity"
     }
   ]
