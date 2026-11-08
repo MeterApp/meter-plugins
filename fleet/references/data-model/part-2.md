@@ -1155,7 +1155,7 @@ Google Maps businesses matching a search, to pick the fleet's own listing.
 | Field | Type | Unit | Visible to | Description |
 | --- | --- | --- | --- | --- |
 | `items` | array |  | everyone | Up to five matching Google Maps businesses, best match first. |
-| `items[].place_id` | string |  | everyone | Google Maps place ID to pass to link_google_maps_place. |
+| `items[].place_id` | string |  | everyone | Google Maps place ID for link_google_maps_place. |
 | `items[].name` | string |  | everyone | Business name on Google Maps. |
 | `items[].address` | string\|null |  | everyone | Formatted address, or null for a service-area business. |
 | `items[].rating_count` | number\|null |  | everyone | Number of Google ratings, or null when unknown. |

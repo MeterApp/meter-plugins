@@ -22,7 +22,7 @@ Call it once. `is_rider: true` means the person has booked rides. `profile` is t
 
 Money in results is in minor units: divide by 100 for most currencies and show the currency. Times are ISO 8601; say them in the pickup's local time. Ids come from these results, never from a guess. A `not_found` is not a hint to try another id.
 
-Bookings waiting for payment are hidden unless you ask: pass `status` with `pending_payment` when the person is looking for a ride they have not paid for yet.
+Bookings waiting for payment are hidden unless you ask: send `status` with `pending_payment` when the person is looking for a ride they have not paid for yet.
 
 ## Quotes
 

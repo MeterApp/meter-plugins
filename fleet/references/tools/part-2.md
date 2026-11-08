@@ -218,8 +218,8 @@ Create a fleet booking on behalf of a customer, as the console's Create booking 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
-| `rider_id` | string (uuid) | no |  | Existing customer from list_customers. Pass this or customer. |
-| `customer` | object | no |  | Customer by phone (found or created and added to your customers) or by email (existing riders only). Pass this or rider_id. |
+| `rider_id` | string (uuid) | no |  | Existing customer from list_customers. Use this or customer. |
+| `customer` | object | no |  | Customer by phone (found or created and added to your customers) or by email (existing riders only). Use this or rider_id. |
 | `pickup` | string \| object | yes |  | Pickup: an address/place text (resolved server-side; ambiguous text is refused) or a place with coordinates. |
 | `dropoff` | string \| object | no |  | Drop-off; required unless service_type is METERED. |
 | `stops` | array of string \| object | no |  | Up to 10 intermediate stops, in order. |
@@ -306,7 +306,7 @@ Bulk-add customers to a fleet or a solo driver's customer list from a list or CS
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `fleet_id` | string (uuid) | no |  | Fleet to import into (owners/admins). Omit as a solo driver. |
-| `customers` | array of object | no |  | Up to 200 customers. Pass this or csv. |
+| `customers` | array of object | no |  | Up to 200 customers. Use this or csv. |
 | `csv` | string | no |  | CSV text with a header row naming columns name, first_name, last_name, phone and/or email (other columns are ignored); up to 200 data rows. |
 | `default_country` | string | no |  | ISO country (e.g. US) for phone numbers written without a + country code; defaults to the fleet's country. |
 | `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
@@ -637,7 +637,7 @@ Example:
 
 **List metered trips** · personas: `solo_driver, fleet_driver, fleet_admin, fleet_owner` · read-only · returns `TripPage`
 
-List completed metered trips, newest first, with times, distance, pickup and drop-off addresses, fare name, receipt total and tip, payment method and paid status. Drivers get only their own trips (driver="me"). Owners and admins may pass driver="all" for every driver in the fleet or a member_id from list_fleet_members. Filter by start_date/end_date; page with cursor and limit (max 100). search_trips sorts and filters. Trips are metered rides, not bookings: use list_bookings for scheduled rides that have not happened yet. No GPS traces are returned.
+List completed metered trips, newest first, with times, distance, pickup and drop-off addresses, fare name, receipt total and tip, payment method and paid status. Drivers get only their own trips (driver="me"). Owners and admins may use driver="all" for every driver in the fleet or a member_id from list_fleet_members. Filter by start_date/end_date; page with cursor and limit (max 100). search_trips sorts and filters. Trips are metered rides, not bookings: use list_bookings for scheduled rides that have not happened yet. No GPS traces are returned.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -943,7 +943,7 @@ Example:
 
 **Compare Meter plans** · personas: `solo_driver, fleet_driver, fleet_admin, fleet_owner` · read-only · returns `PlanCatalog`
 
-List every Meter plan (free, Meter Pro, Meter Fleet) with current prices in the requested currency where offered, billing intervals, trial length, where each plan can be bought, and the capabilities each plan unlocks, derived from Meter's entitlement policy. Meter Pro is bought in the Meter app, so its price comes from the App Store or Google Play and is not listed. Any driver or fleet member may call it. To start a plan, pass its subscribe_action to get_action_link; get_subscription shows the caller's current plan.
+List every Meter plan (free, Meter Pro, Meter Fleet) with current prices in the requested currency where offered, billing intervals, trial length, where each plan can be bought, and the capabilities each plan unlocks, derived from Meter's entitlement policy. Meter Pro is bought in the Meter app, so its price comes from the App Store or Google Play and is not listed. Any driver or fleet member may call it. To start a plan, send its subscribe_action to get_action_link; get_subscription shows the caller's current plan.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |

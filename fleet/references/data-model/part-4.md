@@ -241,7 +241,7 @@ Result of list_bookings. Cursor pagination is by scheduled time.
 | `items[].trip_id` | string\|null |  | everyone | Linked metered trip once the ride is completed, or null. |
 | `items[].created_at` | string | ISO 8601 | everyone | When the booking was created. |
 | `items[].updated_at` | string | ISO 8601 | everyone | When the booking last changed. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## BookingAuditLog
 
@@ -429,7 +429,7 @@ Result of list_ledger_entries: ledger rows, newest first, in the requested windo
 | `items[].settlement_id` | string\|null |  | everyone | Settlement behind the entry, or null. |
 | `items[].void_request_id` | string\|null |  | everyone | Void request that produced or holds the entry, or null. |
 | `items[].payment_method` | string\|null |  | everyone | Recorded payment method of the trip or booking, or null. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## DriverBalancePage
 
@@ -461,7 +461,7 @@ Result of list_driver_balances: per-driver balances and collections per currency
 | `items[].by_currency[].driver_owes_fleet_minor` | number | minor currency units | everyone | Outstanding cash drivers still owe the fleet. |
 | `items[].by_currency[].distance_meters` | number | meters | everyone | Total metered distance. |
 | `items[].by_currency[].duration_seconds` | number | seconds | everyone | Total metered duration. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## SettlementPage
 
@@ -483,7 +483,7 @@ Result of list_settlements: newest first.
 | `items[].trips` | array |  | everyone | Up to 100 covered trips; trip_count has the full count. |
 | `items[].trips[].trip_id` | string |  | everyone | Covered trip. |
 | `items[].trips[].applied_amount_minor` | number | minor currency units | everyone | Part of the settlement applied to this trip. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## AccountingExceptionPage
 
@@ -501,7 +501,7 @@ Result of list_accounting_exceptions.
 | `items[].currency` | string |  | everyone | ISO 4217 currency code, lower- or upper-case as stored (e.g. "usd", "EUR"). |
 | `items[].occurred_at` | string | ISO 8601 | everyone | When the trip happened. |
 | `items[].settlement_ids` | array |  | everyone | Settlements linked to the trip. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## DriverAccounting
 
@@ -556,7 +556,7 @@ Result of get_driver_accounting: one driver's balance, trips and settlements.
 | `by_currency[].driver_owes_fleet_minor` | number | minor currency units | everyone | Outstanding cash drivers still owe the fleet. |
 | `by_currency[].distance_meters` | number | meters | everyone | Total metered distance. |
 | `by_currency[].duration_seconds` | number | seconds | everyone | Total metered duration. |
-| `trips` | object |  | everyone | Page of this driver's trips, newest first. Pass trips.next_cursor as cursor. |
+| `trips` | object |  | everyone | Page of this driver's trips, newest first. Send trips.next_cursor as cursor. |
 | `trips.items` | array |  | everyone | The page of results, newest first unless the tool says otherwise. |
 | `trips.items[].trip_id` | string |  | everyone | Trip id (use get_trip for details). |
 | `trips.items[].occurred_at` | string | ISO 8601 | everyone | When the trip happened. |
@@ -576,7 +576,7 @@ Result of get_driver_accounting: one driver's balance, trips and settlements.
 | `trips.items[].driver_balance_delta_minor` | number |  | everyone | Change to the driver's balance with the fleet from this trip (positive: fleet owes driver). |
 | `trips.items[].distance_meters` | number | meters | everyone | Metered distance. |
 | `trips.items[].duration_seconds` | number | seconds | everyone | Metered duration. |
-| `trips.next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `trips.next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `trips.has_more` | boolean |  | everyone | True when another page exists. |
 | `settlements` | array\|null |  | everyone | Most recent 50 settlements in the period (fleet view only), or null. |
 | `settlements[].settlement_id` | string |  | everyone | Settlement id. |

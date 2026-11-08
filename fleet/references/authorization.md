@@ -35,7 +35,7 @@ Within a result, some fields are further restricted (`roles` in the data model):
 | `unauthenticated` | not signed in, or the sign-in expired | ask the human to reconnect the connector; never ask them to paste anything |
 | `forbidden` | the role does not allow this | switch to a tool that fits the role; do not retry with other ids |
 | `not_found` | unknown id, or one this person may not see (indistinguishable on purpose) | take ids from earlier results |
-| `fleet_required` | the person belongs to several fleets | `list_fleets`, ask which, pass `fleet_id` |
+| `fleet_required` | the person belongs to several fleets | `list_fleets`, ask which, send `fleet_id` |
 | `fleet_not_operational` | onboarding or billing incomplete | own-data tools still work; onboarding skill for the rest |
 | `invalid_argument` | schema violation | `describe_api` with the tool name, fix, retry once |
 

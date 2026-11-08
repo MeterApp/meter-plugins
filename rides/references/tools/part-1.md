@@ -255,7 +255,7 @@ Example:
 
 **Who am I** · personas: `solo_driver, fleet_driver, fleet_admin, fleet_owner, rider` · read-only · returns `Whoami`
 
-Call this first. Returns the signed-in person: profile (their own name, email and phone), every fleet they belong to with their role (owner, admin or driver), whether they are a rider, a plain-language list of what they can read here, and suggested_next_tools. Use it to decide which fleet_id to pass and which tools apply; do not call it repeatedly in one session. Any signed-in user may call it.
+Call this first. Returns the signed-in person: profile (their own name, email and phone), every fleet they belong to with their role (owner, admin or driver), whether they are a rider, a plain-language list of what they can read here, and suggested_next_tools. Use it to decide which fleet_id to use and which tools apply; do not call it repeatedly in one session. Any signed-in user may call it.
 
 No arguments.
 
@@ -417,7 +417,7 @@ Example:
 
 **Look up a place** · personas: `rider` · read-only · returns `PlaceSearch`
 
-Turn text such as an address, airport or business into up to five candidate places with coordinates. Confirm the right candidate with the human when several are plausible, then pass it as pickup, dropoff or a stop. Rate limited per caller.
+Turn text such as an address, airport or business into up to five candidate places with coordinates. Confirm the right candidate with the human when several are plausible, then use it as pickup, dropoff or a stop. Rate limited per caller.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |

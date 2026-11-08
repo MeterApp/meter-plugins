@@ -272,7 +272,7 @@ Change fleet default payout fraction, tip split, card-fee pass-through or eligib
 | `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
 | `default_driver_payout_fraction` | number | no |  | Default fraction for newly joined drivers; 0.9 means 90%. Existing member fractions stay unchanged. |
 | `auto_cash_offset_enabled` | boolean | no |  | Enable or disable automatic cash offsets where the fleet settlement model supports them. |
-| `pass_credit_card_fees_to_customer` | boolean | no |  | Pass configured card processing fees to customers, or have the fleet absorb them. |
+| `pass_credit_card_fees_to_customer` | boolean | no |  | Charge configured card processing fees to customers, or have the fleet absorb them. |
 | `tip_split_behavior` | "TIP_GOES_TO_DRIVER" \| "MATCH_DRIVER_PAYOUT" | no |  | Give all tips to the driver or split tips using the driver's payout fraction. |
 
 Example:
@@ -533,7 +533,7 @@ Example:
 
 **Who am I** · personas: `solo_driver, fleet_driver, fleet_admin, fleet_owner, rider` · read-only · returns `Whoami`
 
-Call this first. Returns the signed-in person: profile (their own name, email and phone), every fleet they belong to with their role (owner, admin or driver), whether they are a rider, a plain-language list of what they can read here, and suggested_next_tools. Use it to decide which fleet_id to pass and which tools apply; do not call it repeatedly in one session. Any signed-in user may call it.
+Call this first. Returns the signed-in person: profile (their own name, email and phone), every fleet they belong to with their role (owner, admin or driver), whether they are a rider, a plain-language list of what they can read here, and suggested_next_tools. Use it to decide which fleet_id to use and which tools apply; do not call it repeatedly in one session. Any signed-in user may call it.
 
 No arguments.
 
@@ -578,7 +578,7 @@ Example:
 
 **Update my profile** · personas: `solo_driver, fleet_driver, fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `MyProfileWrite`
 
-Change the signed-in person's OWN profile: first and last name, business name printed on receipts, preferred navigation app, and (with Meter Pro or a Fleet plan) hiding contact details on receipts and passing card fees to riders. Any signed-in user may call it; it can never change another person's profile. Email or phone changes need verification: use get_action_link with change_email or change_phone. Never changes role, fleet membership, payouts, subscription or verification data. Pass only the fields to change and preview with dry_run: true before confirming the saved proposal_id with identical arguments.
+Change the signed-in person's OWN profile: first and last name, business name printed on receipts, preferred navigation app, and (with Meter Pro or a Fleet plan) hiding contact details on receipts and passing card fees to riders. Any signed-in user may call it; it can never change another person's profile. Email or phone changes need verification: use get_action_link with change_email or change_phone. Never changes role, fleet membership, payouts, subscription or verification data. Send only the fields to change and preview with dry_run: true before confirming the saved proposal_id with identical arguments.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -649,7 +649,7 @@ Example:
 
 **Update fleet settings** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `FleetSettingsWrite`
 
-Change a fleet's public and operational settings: name, description, contact/WhatsApp/dispatch phones, website, city, country, region, currency, timezone, brand colors, app icon, whether riders see driver locations, whether drivers may use custom fares, and out-of-zone pickup/drop-off rules. Owners and admins only, also while the fleet is still completing setup; drivers get a permission error, and a fleet whose billing has lapsed returns fleet_not_operational. Pass only the fields to change. Preview with dry_run: true, then confirm with the saved proposal_id and identical arguments. Not for fares, booking policy, zones, the join code, payouts, billing or the booking page; choose their individual tools from tools/list.
+Change a fleet's public and operational settings: name, description, contact/WhatsApp/dispatch phones, website, city, country, region, currency, timezone, brand colors, app icon, whether riders see driver locations, whether drivers may use custom fares, and out-of-zone pickup/drop-off rules. Owners and admins only, also while the fleet is still completing setup; drivers get a permission error, and a fleet whose billing has lapsed returns fleet_not_operational. Send only the fields to change. Preview with dry_run: true, then confirm with the saved proposal_id and identical arguments. Not for fares, booking policy, zones, the join code, payouts, billing or the booking page; choose their individual tools from tools/list.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -657,18 +657,18 @@ Change a fleet's public and operational settings: name, description, contact/Wha
 | `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
 | `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
 | `name` | string | no |  | Fleet display name shown to riders. |
-| `description` | string \| null | no |  | Public description shown on the booking page. Pass null to clear. |
-| `contact_phone` | string \| null | no |  | Public contact phone riders can call. Pass null to clear. |
-| `contact_whatsapp` | string \| null | no |  | Public WhatsApp number. Pass null to clear. |
-| `dispatch_phone` | string \| null | no |  | Dispatch desk phone number. Pass null to clear. |
-| `website` | string \| null | no |  | Public website URL including https://. Pass null to clear. |
+| `description` | string \| null | no |  | Public description shown on the booking page. Use null to clear. |
+| `contact_phone` | string \| null | no |  | Public contact phone riders can call. Use null to clear. |
+| `contact_whatsapp` | string \| null | no |  | Public WhatsApp number. Use null to clear. |
+| `dispatch_phone` | string \| null | no |  | Dispatch desk phone number. Use null to clear. |
+| `website` | string \| null | no |  | Public website URL including https://. Use null to clear. |
 | `city` | string | no |  | Primary city the fleet operates in. |
 | `country_iso_code` | string | no |  | ISO 3166-1 alpha-2 country code, e.g. "US". |
-| `region_iso_code` | string \| null | no |  | ISO 3166-2 region/state code, e.g. "TX". Pass null to clear. |
+| `region_iso_code` | string \| null | no |  | ISO 3166-2 region/state code, e.g. "TX". Use null to clear. |
 | `currency_iso_code` | string | no |  | ISO 4217 currency code, e.g. "USD". Changing it does not convert existing fares. |
 | `timezone` | string | no |  | IANA timezone, e.g. "America/Chicago". |
-| `primary_color` | string \| null | no |  | Brand primary color as #RRGGBB. Pass null to clear. |
-| `secondary_color` | string \| null | no |  | Brand secondary color as #RRGGBB. Pass null to clear. |
+| `primary_color` | string \| null | no |  | Brand primary color as #RRGGBB. Use null to clear. |
+| `secondary_color` | string \| null | no |  | Brand secondary color as #RRGGBB. Use null to clear. |
 | `icon_id` | string | no |  | generate_fleet_icons option to use as the app icon. |
 
 Example:
@@ -821,7 +821,7 @@ Example:
 
 **List driver documents** · personas: `fleet_admin, fleet_owner` · read-only · returns `MemberDocumentsPage`
 
-Show each fleet member's driver documents (license, insurance, registration, vehicle photo): whether each was uploaded, how many photos, whether it is verified, and its expiry date and whether it has expired. Never returns document images, tax ids or license numbers; the photos are viewable only in the console. Pass member_id for one member, or page through all members with cursor and limit (max 100). Owners and admins of an operational fleet only. Approve or un-approve with review_member_document; to upload a document for a member, give the human the edit_fleet_member link from get_action_link (target_id = member_id).
+Show each fleet member's driver documents (license, insurance, registration, vehicle photo): whether each was uploaded, how many photos, whether it is verified, and its expiry date and whether it has expired. Never returns document images, tax ids or license numbers; the photos are viewable only in the console. Give member_id for one member, or page through all members with cursor and limit (max 100). Owners and admins of an operational fleet only. Approve or un-approve with review_member_document; to upload a document for a member, give the human the edit_fleet_member link from get_action_link (target_id = member_id).
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -876,7 +876,7 @@ Example:
 
 **Assign or unassign a fleet vehicle** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `VehicleAssignmentWrite`
 
-Assign a fleet vehicle (vehicle_id from list_vehicles) to a fleet member (member_id from list_fleet_members), replacing whoever drives it today and releasing any other vehicle that member was assigned; or pass member_id: null to unassign the current driver. Owners and admins only, also while the fleet is still completing setup (a fleet whose billing has lapsed returns fleet_not_operational). The member must belong to the same fleet. Returns the vehicle with its assigned_driver after the change. Edit or remove vehicles with update_vehicle or remove_vehicle. Preview with dry_run: true, show all assignment changes, then confirm with the saved proposal_id.
+Assign a fleet vehicle (vehicle_id from list_vehicles) to a fleet member (member_id from list_fleet_members), replacing whoever drives it today and releasing any other vehicle that member was assigned; or send member_id: null to unassign the current driver. Owners and admins only, also while the fleet is still completing setup (a fleet whose billing has lapsed returns fleet_not_operational). The member must belong to the same fleet. Returns the vehicle with its assigned_driver after the change. Edit or remove vehicles with update_vehicle or remove_vehicle. Preview with dry_run: true, show all assignment changes, then confirm with the saved proposal_id.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -895,7 +895,7 @@ Example:
 
 **Edit a fleet vehicle** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `VehicleUpdateWrite`
 
-Change a fleet vehicle's details (vehicle_id from list_vehicles): model year, make and model (checked against the vehicle catalog), plate, nickname, color, passenger and luggage capacity, wheelchair access and pet friendliness. Pass only the fields to change; null clears plate, nickname or color. Owners and admins only, also while the fleet is still completing setup. Does not change who drives it (use assign_vehicle). Preview with dry_run: true, show the changes, then confirm with the saved proposal_id and identical arguments.
+Change a fleet vehicle's details (vehicle_id from list_vehicles): model year, make and model (checked against the vehicle catalog), plate, nickname, color, passenger and luggage capacity, wheelchair access and pet friendliness. Send only the fields to change; null clears plate, nickname or color. Owners and admins only, also while the fleet is still completing setup. Does not change who drives it (use assign_vehicle). Preview with dry_run: true, show the changes, then confirm with the saved proposal_id and identical arguments.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -951,7 +951,7 @@ Edit an existing bookable ride option (vehicle class) of a fleet: its name and p
 | `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
 | `name` | string | no |  | Ride option name shown to riders, e.g. "Sedan". |
 | `capacity` | integer | no |  | Passenger capacity, 1 to 60. |
-| `fare` | object | no |  | Fare (rate card) fields to change on the ride option's default fare. Only pass the fields you intend to change. |
+| `fare` | object | no |  | Fare (rate card) fields to change on the ride option's default fare. Only send the fields you intend to change. |
 
 Example:
 
@@ -1039,7 +1039,7 @@ Example:
 
 **Find a service zone boundary** · personas: `fleet_admin, fleet_owner` · read-only · returns `ZoneBoundary`
 
-Map a plain-language area (city, county, state, ZIP code, borough, neighborhood, airport, or includes and exclusions of these) to its official land boundary. Takes up to two minutes. Returns a boundary_id to pass to save_service_zone when accepted, or a reason when the description is ambiguous or not found. Saves nothing. Owners/admins only.
+Map a plain-language area (city, county, state, ZIP code, borough, neighborhood, airport, or includes and exclusions of these) to its official land boundary. Takes up to two minutes. Returns a boundary_id for save_service_zone when accepted, or a reason when the description is ambiguous or not found. Saves nothing. Owners/admins only.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -1263,7 +1263,7 @@ Example:
 
 **Add a known location** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `KnownLocationWrite`
 
-Add a known location (an airport, hotel or landmark) with a unique short code. Text places are resolved server-side and refused when ambiguous; pass exact coordinates instead. An optional routing point sends trips through e.g. a ride-share lot. Owners/admins only. Preview with dry_run: true, show every change to the human, then confirm the saved proposal with identical arguments.
+Add a known location (an airport, hotel or landmark) with a unique short code. Text places are resolved server-side and refused when ambiguous; give exact coordinates instead. An optional routing point sends trips through e.g. a ride-share lot. Owners/admins only. Preview with dry_run: true, show every change to the human, then confirm the saved proposal with identical arguments.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -1670,7 +1670,7 @@ Example:
 
 **Update booking settings** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingSettingsWrite`
 
-Change a fleet's booking policy: dispatch mode (manual, all online drivers, auto-dispatch), payment mode (card when booking, or pay the driver after the trip), minimum lead time, hourly-booking slot size and minimum duration, rider cancellation fee fraction/minimum and free-cancellation grace period, driver cancellation reasons/fee mode/no-show wait/post-pickup rule, and owner booking emails. Owners and admins only, also while the fleet is still completing setup (a fleet whose billing has lapsed returns fleet_not_operational). Pass only the fields to change; values outside the allowed sets are rejected. Call with dry_run: true first to preview. Creates the booking settings record when the fleet has none yet. Not for fares or ride options (use update_ride_option).
+Change a fleet's booking policy: dispatch mode (manual, all online drivers, auto-dispatch), payment mode (card when booking, or pay the driver after the trip), minimum lead time, hourly-booking slot size and minimum duration, rider cancellation fee fraction/minimum and free-cancellation grace period, driver cancellation reasons/fee mode/no-show wait/post-pickup rule, and owner booking emails. Owners and admins only, also while the fleet is still completing setup (a fleet whose billing has lapsed returns fleet_not_operational). Send only the fields to change; values outside the allowed sets are rejected. Call with dry_run: true first to preview. Creates the booking settings record when the fleet has none yet. Not for fares or ride options (use update_ride_option).
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
