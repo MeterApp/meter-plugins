@@ -1,6 +1,6 @@
 {
   "name": "meter-fleet",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Meter for Drivers & Fleets, the taxi meter and fleet platform for AI agents. Ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting, see a driver's own trips and pay stubs, guide a new fleet through onboarding, and change settings with a dry run and your confirmation. Signs in with your Meter account in the browser.",
   "author": {
     "name": "Meter",
@@ -40,8 +40,8 @@
       "Show me my own trips and card payouts for last week."
     ],
     "brandColor": "#106A57",
-    "composerIcon": "./assets/logo.svg",
-    "logo": "./assets/logo.svg",
+    "composerIcon": "./.claude-plugin/icon.png",
+    "logo": "./.claude-plugin/icon.png",
     "supportURL": "https://www.meterapp.co/docs/plugins",
     "privacyPolicyURL": "https://www.meterapp.co/privacy",
     "termsOfServiceURL": "https://www.meterapp.co/privacy"

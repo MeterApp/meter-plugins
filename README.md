@@ -46,8 +46,6 @@ Before 2.0.0 this repository offered one plugin, `meter`, with both servers. Uni
 ## Development
 
 ```bash
-python3 scripts/validate_repo.py
-python3 scripts/check_endpoint.py
 claude plugin validate . --strict
 claude plugin validate ./fleet --strict
 claude plugin validate ./rides --strict

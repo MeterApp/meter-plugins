@@ -1600,7 +1600,7 @@ Estimate fleet estimate-v2 pricing or your personal fare; creates no booking, qu
 | `ride_option_id` | string (uuid) | no |  | Optional ride option belonging to the selected fleet. |
 | `service_type` | "POINT_TO_POINT" \| "METERED" \| "TIME" | no | `"POINT_TO_POINT"` | Ride product. Personal fares support point-to-point only. |
 | `origin` | object | yes |  | Pickup coordinates. |
-| `destination` | object | no |  | Drop-off coordinates; required for point-to-point. |
+| `destination` | object | no |  | Drop-off coordinates; required for point-to-point, optional for TIME. |
 | `waypoints` | array of object | no |  | Up to ten intermediate stops, in travel order. |
 | `start_timestamp` | string (date-time) | no |  | Scheduled pickup with timezone, at least one minute in the future; omit for ASAP. |
 | `duration_minutes` | integer | no |  | TIME booking duration in minutes, matching fleet slot and minimum rules. |

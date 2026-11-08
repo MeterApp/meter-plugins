@@ -17,7 +17,6 @@ one hosted MCP server, so the directory can pair it with that server's connector
 | `.agents/plugins/marketplace.json` | `codex plugin marketplace add MeterApp/meter-plugins` |
 | `fleet/` | The plugin `meter-fleet` (Meter for Drivers & Fleets), server `https://www.meterapp.co/api/mcp/fleet` |
 | `rides/` | The plugin `meter-rides` (Meter Rides), server `https://www.meterapp.co/api/mcp/rider` |
-| `scripts/validate_repo.py`, `scripts/check_endpoint.py` | CI in the published repository |
 
 Inside each plugin folder:
 
@@ -32,7 +31,7 @@ Inside each plugin folder:
 | `references/` | Deep material the skills link to; `tools.md` and `data-model.md` are generated, with only that server's tools and objects |
 
 A plugin install copies only its own folder, so each one carries its own README,
-LICENSE, CHANGELOG, logo and references, and links nothing outside itself.
+LICENSE, CHANGELOG, icon and references, and links nothing outside itself.
 
 ## Rules
 
@@ -41,8 +40,8 @@ LICENSE, CHANGELOG, logo and references, and links nothing outside itself.
   plugin by name. A skill depends only on its own plugin's server.
 - **Versions move together.** All three `plugin.json` files and `server.json` of
   both plugins carry the same `version`, and each `CHANGELOG.md` gains a
-  `## <version> ` heading in the same commit. `scripts/validate_repo.py` fails
-  otherwise. A version published to the MCP Registry can never be changed, so
+  `## <version> ` heading in the same commit. The source repository's validator
+  (`scripts/ops/validate-meter-plugin.py`) fails otherwise. A version published to the MCP Registry can never be changed, so
   publish it only from a released version.
 - **Listing URLs are real pages on `https://www.meterapp.co`.** The Claude
   manifest's `privacyPolicyUrl`, `termsOfServiceUrl` and `supportUrl` match the
@@ -57,7 +56,7 @@ LICENSE, CHANGELOG, logo and references, and links nothing outside itself.
   marketplaces by name, so it must not share one with another Meter marketplace
   (Car Image's is `meterapp`, skillhook's `meterapp-skillhook`): whoever added
   one could not add the other. Both marketplace files and every install or
-  update command use it; `scripts/validate_repo.py` fails otherwise, except in
+  update command use it; the validator fails otherwise, except in
   a `CHANGELOG.md`, whose migration notes give commands with the old names.
 - **Generated references are not edited by hand.** `references/tools.md` and
   `references/data-model.md` and their linked `tools/part-*.md` and `data-model/part-*.md` files come from `pnpm run agent-docs:generate` in the
@@ -89,8 +88,13 @@ LICENSE, CHANGELOG, logo and references, and links nothing outside itself.
   not what it does not do. The word list lives in the source repository
   (`scripts/ops/scan-meter-plugin.py`), which runs before every publish; keep
   it out of this directory.
-- **Never pipe a download into a shell or interpreter.** Anything a workflow or
-  the plugin runs is a committed file: `scripts/check_endpoint.py` is why.
+- **Only allowed file types.** MeterApp is not a Verified organization, so the
+  directory refuses any file but Markdown, text, JSON, YAML and PNG/JPEG/GIF/WebP/ICO
+  images (SVG included), plus LICENSE and .gitignore, and refuses scripts and package
+  manager files. Validators live in the source repository, and the logo is the PNG
+  each Claude manifest names.
+- **Never pipe a download into a shell or interpreter.** Anything a workflow runs
+  is a committed file.
 - **Write for the conversation as well as the terminal.** Claude.ai and ChatGPT
   load one skill and have no shell: say which tool to call, what to show the
   person and when to ask first, and keep CLI commands in their own section.
@@ -121,8 +125,6 @@ LICENSE, CHANGELOG, logo and references, and links nothing outside itself.
 ## Validation
 
 ```bash
-python3 scripts/validate_repo.py
-python3 scripts/check_endpoint.py
 claude plugin validate . --strict
 claude plugin validate ./fleet --strict
 claude plugin validate ./rides --strict
@@ -130,7 +132,9 @@ CODEX_HOME="$(mktemp -d)" codex plugin marketplace add . --json
 skills add . --list
 ```
 
-CI runs all of these on every push, plus a scheduled run of the endpoint check.
+CI runs all of these on every push. The source repository also runs
+`scripts/ops/validate-meter-plugin.py` and `scripts/ops/scan-meter-plugin.py` before
+each publish, and `scripts/ops/check-meter-plugin-endpoint.py` on a schedule.
 
 ## Releasing
 

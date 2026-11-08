@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1 — 2026-11-08
+
+- The plugin ships only file types the Claude plugin directory accepts from organizations that are not Verified: the SVG logo is gone, and Codex and the directory listing use a PNG logo instead. Tools, skills and sign-in did not change.
+
 ## 2.0.0 — 2026-11-05
 
 Before 2.0.0 this marketplace offered one plugin, `meter`, connected to both Meter servers. The Anthropic Directory pairs a plugin with one connector, so there are now two plugins, one per server: `meter-fleet` (Meter for Drivers & Fleets) and `meter-rides` (Meter Rides). Sign-in, tools and what you can do have not changed.

@@ -59,12 +59,7 @@ The MCP server at `https://www.meterapp.co/api/mcp/fleet` provides the tools lis
 
 ## Sign-in
 
-| Surface | How you sign in |
-| --- | --- |
-| Hosted MCP | Your host opens the Meter sign-in (OAuth 2.1) and keeps the connection |
-| Meter CLI (separate package) | `npx @meterapp/meter login`, the same Meter sign-in; `meter call <tool> --dry-run` previews any write |
-
-The host finds the sign-in from the server's 401 answer and its metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet`. The plugin itself asks you for nothing: you only ever sign in on meterapp.co. Details in [references/authorization.md](references/authorization.md).
+Your host opens the Meter sign-in (OAuth 2.1) and keeps the connection. The host finds the sign-in from the server's 401 answer and its metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet`. The plugin itself asks you for nothing: you only ever sign in on meterapp.co. Details in [references/authorization.md](references/authorization.md).
 
 ## Safety model
 
