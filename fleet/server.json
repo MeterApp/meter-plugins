@@ -3,7 +3,7 @@
   "name": "co.meterapp/meter",
   "title": "Meter for Drivers & Fleets",
   "description": "Drive with Meter or run a Meter taxi fleet: trips, bookings, drivers, earnings and settings.",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "websiteUrl": "https://www.meterapp.co/docs/mcp",
   "repository": {
     "url": "https://github.com/MeterApp/meter-plugins",

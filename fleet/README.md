@@ -41,8 +41,6 @@ Add a connector with the URL `https://www.meterapp.co/api/mcp/fleet` in the app'
 
 Installed the `meter` plugin before 2.0.0? [CHANGELOG.md](CHANGELOG.md) shows how to move to this one.
 
-The CLI, `@meterapp/meter`, installs its own new versions in the background, and `meter update` updates it now and refreshes this plugin wherever Claude Code or Codex has it installed.
-
 ## What you get
 
 Five skills and the hosted MCP server.
@@ -55,7 +53,7 @@ Five skills and the hosted MCP server.
 | `meter-driver-personal` | An individual driver's own trips, earnings, pay stubs, availability and profile |
 | `meter-api-explainer` | "How does this work / what does this field mean", and drafting integrations |
 
-The MCP server at `https://www.meterapp.co/api/mcp/fleet` provides the tools listed in [references/tools.md](references/tools.md); the objects they return are in [references/data-model.md](references/data-model.md). Both files are generated from the server's own catalog. The server also describes itself: `describe_api` returns a domain index by default; pass `domain` to browse its tools or `tool` for full detail. `explain_data` explains any result field.
+The MCP server at `https://www.meterapp.co/api/mcp/fleet` provides the tools listed in [references/tools.md](references/tools.md); the objects they return are in [references/data-model.md](references/data-model.md). Both files are generated from the server's own catalog. The server also describes itself: `describe_api` returns a domain index by default; name a `domain` to browse its tools or a `tool` for full detail. `explain_data` explains any result field.
 
 ## Sign-in
 
@@ -64,7 +62,7 @@ Your host opens the Meter sign-in (OAuth 2.1) and keeps the connection. The host
 ## Safety model
 
 - Read first, ask second. `whoami` tells the agent who is signed in and which fleets and roles they have; ids come from results, never from guesses.
-- Every settings change is a dry run first. `dry_run` defaults to false, so the agent passes `dry_run: true`, shows the exact `changes` (`field`, `from`, `to`), waits for an explicit yes, then repeats the call to apply. Fares are never changed without stating the from and to values.
+- Every settings change is a dry run first. `dry_run` defaults to false, so the agent sets `dry_run: true`, shows the exact `changes` (`field`, `from`, `to`), waits for an explicit yes, then repeats the call to apply. Fares are never changed without stating the from and to values.
 - A permission error is final for that person. The agent switches to a tool that fits their role instead of retrying.
 - Results never contain payment-provider ids, GPS traces, internal notes or other people's contact details beyond what the role allows. See [references/safety.md](references/safety.md).
 

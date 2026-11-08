@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2 — 2026-11-08
+
+- Released with Meter for Drivers & Fleets, whose README and changelog got shorter. This plugin did not change.
+
 ## 2.0.1 — 2026-11-08
 
 - The plugin ships only file types the Claude plugin directory accepts from organizations that are not Verified: the SVG logo is gone, and Codex and the directory listing use a PNG logo instead. Tools, skills and sign-in did not change.

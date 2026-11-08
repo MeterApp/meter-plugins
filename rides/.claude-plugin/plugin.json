@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "meter-rides",
   "displayName": "Meter Rides",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Meter Rides, booking taxi rides with local companies for AI agents. Find your taxi company, confirm the addresses, see the price first and book only after your yes. Pay on Meter's own checkout page, never in the chat. Follow the driver, cancel with the fee shown first, and look back at your past rides and quotes. Signs in with your Meter account in the browser.",
   "author": {
     "name": "Meter",
