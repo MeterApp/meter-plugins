@@ -29,7 +29,7 @@ A preview includes the following envelope (with the returned proposal ID saved f
 ## The sequence, every time
 
 1. **Read first.** `whoami` for the role, then the matching read tool (`get_fleet` for fleet, booking and ride-option settings; `list_vehicles` and `list_fleet_members` for assignments). Quote the current value.
-2. **Dry run.** Call the write tool with `dry_run: true` and only the fields the human named. Never pass fields "to be safe"; omitted fields are left alone and unknown fields are rejected.
+2. **Dry run.** Call the write tool with `dry_run: true` and only the fields the human named. Never send fields "to be safe"; omitted fields are left alone and unknown fields are rejected.
 3. **Echo the changes.** Show `changes` exactly as returned: each `field` with its `from` and `to` value, plus any warnings. If the list is empty, say nothing would change and stop.
 4. **Ask.** One clear question: "Apply these N changes to <fleet name>? (yes/no)". Wait for the answer. A vague reply ("sure, whatever works") is not a yes for money fields; ask again with the numbers.
 5. **Apply.** Repeat the intended arguments with the saved `proposal_id` and `dry_run: false`. Confirm `status: applied`; an applied no-op has `applied: false` and no changes. For stale or expired proposals, show the fresh replacement and ask for confirmation again. Report the result and, for fleet settings, re-read with `get_fleet`.
@@ -58,7 +58,7 @@ A `forbidden` error is final for that person. Do not retry with another fleet or
 
 ## From a terminal
 
-`npx @meterapp/meter call <tool> --<field> <value> --dry-run` runs the same preview. After explicit human confirmation, resend the intended arguments with the returned `proposal_id` and `dry_run: false`; if the client cannot pass the proposal ID, repeat the identical intended arguments only after confirmation. A missing or expired preview requires fresh confirmation.
+`npx @meterapp/meter call <tool> --<field> <value> --dry-run` runs the same preview. After explicit human confirmation, resend the intended arguments with the returned `proposal_id` and `dry_run: false`; if the client cannot send the proposal ID, repeat the identical intended arguments only after confirmation. A missing or expired preview requires fresh confirmation.
 
 ## After a change
 

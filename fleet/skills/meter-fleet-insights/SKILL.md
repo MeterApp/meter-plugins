@@ -36,7 +36,7 @@ If there are several fleets and the question does not name one, ask which fleet 
 
 ## Pagination and time ranges
 
-- Lists return `items` and `next_cursor`. Pass `cursor` back until it is null; keep `limit` at or below 100. For totals over a period, page through everything or use the summary tools instead of stopping early.
+- Lists return `items` and `next_cursor`. Send `cursor` back until it is null; keep `limit` at or below 100. For totals over a period, page through everything or use the summary tools instead of stopping early.
 - `start_date`/`end_date` (trips, earnings, accounting) and `after`/`before` (bookings) take ISO 8601 dates. Interpret "last week" in the fleet's timezone (`get_fleet` or `list_fleets` return `timezone`), and state the range you used.
 - Trips are metered rides that happened. Bookings are scheduled rides, some of which become trips (`trip_id` on the booking once completed). Do not add them together.
 

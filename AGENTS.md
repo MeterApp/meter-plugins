@@ -101,7 +101,7 @@ LICENSE, CHANGELOG, icon and references, and links nothing outside itself.
 
 ## Safety
 
-- **Every write requires a saved preview and explicit confirmation.** Pass
+- **Every write requires a saved preview and explicit confirmation.** Set
   `dry_run: true`, save the returned proposal, show every `changes` row
   (`field`, `from`, `to`), wait for an explicit yes, then repeat the intended
   arguments with `proposal_id` and `dry_run: false`. A first call without a live

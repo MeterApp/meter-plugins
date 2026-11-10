@@ -13,9 +13,9 @@ These rules apply to every skill in this plugin. They exist because the data is 
 
 ## Writing
 
-7. **Every write starts with a saved preview.** Pass `dry_run: true` explicitly. The result includes `status: preview`, a `proposal`, and `changes: [{ field, from, to }]`; show every change verbatim and stop. A first call without a live proposal writes nothing and returns `confirmation_required`.
+7. **Every write starts with a saved preview.** Set `dry_run: true` explicitly. The result includes `status: preview`, a `proposal`, and `changes: [{ field, from, to }]`; show every change verbatim and stop. A first call without a live proposal writes nothing and returns `confirmation_required`.
 8. **An explicit yes, on the concrete values.** Then repeat the intended arguments with the saved `proposal_id` and `dry_run: false`. Confirm `status: applied`; `applied: false` with no changes means no mutation was needed. If the proposal is stale or expired, show its fresh replacement and ask again. Never chain the two in one turn. A vague reply is not a yes for money fields.
-9. **Only the fields the human named.** Do not pass extra fields, do not act on a dry-run warning without asking, and do not fix things the human did not mention.
+9. **Only the fields the human named.** Do not send extra fields, do not act on a dry-run warning without asking, and do not fix things the human did not mention.
 10. **Fares and payout fractions are money.** Always state old and new values with the currency. Never change them in a batch the human did not enumerate, and never invent market rates.
 11. **One target at a time.** Several fleets or several ride options mean several dry-run and confirm cycles.
 

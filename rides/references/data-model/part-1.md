@@ -516,7 +516,7 @@ A bounded page of currently authorized stored quotes.
 | `items[].sent_at` | string\|null |  | everyone | Most recent send timestamp, or null; not proof of notification delivery. |
 | `items[].is_asap` | boolean |  | everyone | Whether the quote requests pickup as soon as possible. |
 | `items[].is_time_booking` | boolean |  | everyone | Whether this quote is for a time-based booking. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## MeterPayStatus
 
@@ -537,7 +537,7 @@ Read-only Meter Pay readiness with safe setup guidance and no provider IDs, URLs
 | `missing[].category` | enum |  | everyone | Safe category of required account information. Values: `address`, `bank_account`, `business_profile`, `company`, `contact`, `director`, `document`, `executive`, `identity`, `individual`, `owner`, `representative`, `tax`, `terms_of_service`, `other`, `risk`. |
 | `missing[].description` | string |  | everyone | Safe explanation of the missing information. |
 | `missing[].status` | enum |  | everyone | When the information is required or whether verification is pending. Values: `currently_due`, `past_due`, `eventually_due`, `pending_verification`. |
-| `management_action` | enum |  | everyone | Pass this action to get_action_link; include fleet_id for fleet scope. Values: `meter_pay_setup`, `meter_pay_manage`. |
+| `management_action` | enum |  | everyone | Send this action to get_action_link; include fleet_id for fleet scope. Values: `meter_pay_setup`, `meter_pay_manage`. |
 | `checked_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
 ## ActionLink
 
@@ -574,7 +574,7 @@ A page of the signed-in actor’s assistant changes, with an opaque continuation
 | `items[].applied_at` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
 | `items[].redacted_at` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
 | `items[].error_code` | string\|null |  | everyone | Stable failure code, without internal error text. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## Whoami
 
@@ -589,7 +589,7 @@ Result of `whoami`: who is calling and what they may read.
 | `profile.phone` | string\|null |  | self | Your own phone number in E.164 (never shown for other users). |
 | `profile.created_at` | string\|null | ISO 8601 | everyone | When your Meter profile was created. |
 | `fleets` | array |  | everyone | Every fleet you belong to. Empty for riders and solo drivers. |
-| `fleets[].fleet_id` | string |  | everyone | Opaque fleet id. Pass as `fleet_id` to fleet-scoped tools. |
+| `fleets[].fleet_id` | string |  | everyone | Opaque fleet id. Send as `fleet_id` to fleet-scoped tools. |
 | `fleets[].name` | string\|null |  | everyone | Fleet display name. |
 | `fleets[].role` | enum |  | everyone | Role in the fleet. owner: created the fleet and controls billing; admin: manages members, vehicles, bookings and money; driver: drives and sees only their own trips, bookings and earnings. Values: `owner`, `admin`, `driver`. |
 | `fleets[].is_operational` | boolean |  | everyone | True when the fleet has finished onboarding and billing is active. Admin-only tools (members, accounting, fleet-wide trips) require an operational fleet. |
@@ -625,7 +625,7 @@ Bookable fleets for a rider.
 | `items[].max_capacity` | number\|null |  | everyone | Largest passenger capacity among ride options, or null. |
 | `items[].distance_meters` | number\|null | meters | everyone | Distance from the searched point when known, or null. |
 | `items[].booking_url` | string\|null |  | everyone | Public booking page, or null when the fleet has no slug. |
-| `next_cursor` | string\|null |  | everyone | Pass back as cursor for the next page; null when done. |
+| `next_cursor` | string\|null |  | everyone | Send back as cursor for the next page; null when done. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 | `scope` | enum |  | everyone | nearby: fleets serving the searched point plus saved fleets; global: every publicly listed fleet matching the query. Values: `nearby`, `global`. |
 ## PlaceSearch
@@ -662,7 +662,7 @@ Prices for a ride. Books nothing and holds no money.
 | `distance_meters` | number\|null | meters | everyone | Estimated route distance. |
 | `duration_seconds` | number\|null | seconds | everyone | Estimated route duration. |
 | `options` | array |  | everyone | Priced ride options, cheapest first. |
-| `options[].ride_option_id` | string |  | everyone | Pass to request_ride as ride_option_id. |
+| `options[].ride_option_id` | string |  | everyone | Send to request_ride as ride_option_id. |
 | `options[].estimate_id` | string |  | everyone | Server estimate reference for this option. |
 | `options[].name` | string |  | everyone | Ride option name, e.g. Sedan. |
 | `options[].capacity` | number\|null |  | everyone | Maximum passengers, or null. |
@@ -1145,7 +1145,7 @@ Result of list_bookings. Cursor pagination is by scheduled time.
 | `items[].trip_id` | string\|null |  | everyone | Linked metered trip once the ride is completed, or null. |
 | `items[].created_at` | string | ISO 8601 | everyone | When the booking was created. |
 | `items[].updated_at` | string | ISO 8601 | everyone | When the booking last changed. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## BookingAuditLog
 

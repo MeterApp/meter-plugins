@@ -47,7 +47,7 @@ Call `search_places` for the pickup and again for the drop-off (and every stop).
 
 ### 4. When and how many
 
-A ride now has no `pickup_time`. A ride later needs an ISO 8601 time with the offset of the pickup's local time (`2026-10-15T06:00:00-04:00`). Resolve "tomorrow at 6am" against the pickup's time zone and say the date back: "Thursday 15 October at 6:00 am". Ask how many passengers if it matters for the vehicle, and pass `passengers`.
+A ride now has no `pickup_time`. A ride later needs an ISO 8601 time with the offset of the pickup's local time (`2026-10-15T06:00:00-04:00`). Resolve "tomorrow at 6am" against the pickup's time zone and say the date back: "Thursday 15 October at 6:00 am". Ask how many passengers if it matters for the vehicle, and set `passengers`.
 
 ### 5. Price options
 
@@ -107,7 +107,7 @@ Do the same when the person asks "did it go through?" or asks for the same ride 
 
 ## While the ride is on its way
 
-`get_ride_status` with the booking returns the status, the driver's first name, the vehicle and plate, a phone number to reach the driver, an ETA when there is one, what cancelling would cost right now, and the receipt link after the trip. Give the person what they asked for; do not pass the driver's phone number on to anyone else. If the person asks "where is my ride" and you do not have the booking id, `list_bookings` with `scope: "rider"` first.
+`get_ride_status` with the booking returns the status, the driver's first name, the vehicle and plate, a phone number to reach the driver, an ETA when there is one, what cancelling would cost right now, and the receipt link after the trip. Give the person what they asked for; do not share the driver's phone number with anyone else. If the person asks "where is my ride" and you do not have the booking id, `list_bookings` with `scope: "rider"` first.
 
 ## Cancelling
 

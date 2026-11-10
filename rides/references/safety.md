@@ -8,11 +8,11 @@ These rules apply to every skill in this plugin. A ride is a real car sent to a 
 2. **Never guess an id.** `fleet_id`, `booking_id` and `quote_id` come from earlier results. A `not_found` on a guessed id is not a hint to try another.
 3. **A permission error is final for this person.** `forbidden` means they may not see or do that. Do not retry with other ids.
 4. **Present in the ride's terms.** Currency from the result (values are minor units) and the pickup's local time.
-5. **Respect the privacy boundary.** Results already exclude payment-provider ids, GPS traces, internal notes and other people's contact details. Do not try to infer them, and do not pass a driver's phone number on to anyone else.
+5. **Respect the privacy boundary.** Results already exclude payment-provider ids, GPS traces, internal notes and other people's contact details. Do not try to infer them, and do not share a driver's phone number with anyone else.
 
 ## Writing
 
-6. **Every write starts with a saved preview.** Pass `dry_run: true` explicitly. The result includes `status: preview`, a `proposal`, and `changes: [{ field, from, to }]`; show every part of it and stop. A first call without a live proposal writes nothing and returns `confirmation_required`.
+6. **Every write starts with a saved preview.** Set `dry_run: true` explicitly. The result includes `status: preview`, a `proposal`, and `changes: [{ field, from, to }]`; show every part of it and stop. A first call without a live proposal writes nothing and returns `confirmation_required`.
 7. **An explicit yes, on the concrete values.** Then repeat the intended arguments with the saved `proposal_id` and `dry_run: false`. If the proposal is stale or expired, show its fresh replacement and ask again. Never chain the two in one turn.
 8. **Only for the signed-in person.** Rides are booked for the person who signed in, nobody else.
 9. **Never retry a booking blind.** Check `list_bookings` first: a timeout after a booking call does not mean nothing happened.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.3 — 2026-11-08
+
+- Reworded the skills and references for the directory's automatic check. Tools, skills and sign-in did not change.
+
 ## 2.0.2 — 2026-11-08
 
 - Released with Meter for Drivers & Fleets, whose README and changelog got shorter. This plugin did not change.

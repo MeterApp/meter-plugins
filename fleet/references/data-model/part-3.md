@@ -298,7 +298,7 @@ A bounded page of currently authorized stored quotes.
 | `items[].sent_at` | string\|null |  | everyone | Most recent send timestamp, or null; not proof of notification delivery. |
 | `items[].is_asap` | boolean |  | everyone | Whether the quote requests pickup as soon as possible. |
 | `items[].is_time_booking` | boolean |  | everyone | Whether this quote is for a time-based booking. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## QuoteWrite
 
@@ -357,7 +357,7 @@ Read-only Meter Pay readiness with safe setup guidance and no provider IDs, URLs
 | `missing[].category` | enum |  | everyone | Safe category of required account information. Values: `address`, `bank_account`, `business_profile`, `company`, `contact`, `director`, `document`, `executive`, `identity`, `individual`, `owner`, `representative`, `tax`, `terms_of_service`, `other`, `risk`. |
 | `missing[].description` | string |  | everyone | Safe explanation of the missing information. |
 | `missing[].status` | enum |  | everyone | When the information is required or whether verification is pending. Values: `currently_due`, `past_due`, `eventually_due`, `pending_verification`. |
-| `management_action` | enum |  | everyone | Pass this action to get_action_link; include fleet_id for fleet scope. Values: `meter_pay_setup`, `meter_pay_manage`. |
+| `management_action` | enum |  | everyone | Send this action to get_action_link; include fleet_id for fleet scope. Values: `meter_pay_setup`, `meter_pay_manage`. |
 | `checked_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
 ## SubscriptionOverview
 
@@ -386,7 +386,7 @@ Read-only plan and subscription state with the hand-off actions to upgrade, chan
 | `subscriptions[].cancel_at_period_end` | boolean |  | everyone | True when cancellation is scheduled: access continues until current_period_end and the subscription does not renew. |
 | `subscriptions[].manage` | object |  | everyone | How the human manages this purchase. |
 | `subscriptions[].manage.where` | enum |  | everyone | Where the human changes, cancels or updates payment for this purchase. Store purchases can only be changed in that store; none means nothing to manage (granted access). Values: `meter_console`, `app_store`, `play_store`, `none`. |
-| `subscriptions[].manage.actions` | array |  | everyone | get_action_link actions that open the right place, in order of usefulness. Pass fleet_id for a fleet subscription when the caller owns it. |
+| `subscriptions[].manage.actions` | array |  | everyone | get_action_link actions that open the right place, in order of usefulness. Include fleet_id for a fleet subscription when the caller owns it. |
 | `granted_access` | array |  | everyone | Plans unlocked without a paid subscription on this account, such as a Meter promotion or membership of a paid fleet. Nothing to cancel or pay. |
 | `granted_access[].family` | enum |  | everyone | pro: Meter Pro (driver features). fleet: Meter Fleet (a fleet's team, booking and dispatch features; also unlocks Pro features for the subscriber). Values: `pro`, `fleet`. |
 | `granted_access[].expires_at` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
@@ -402,7 +402,7 @@ Read-only plan and subscription state with the hand-off actions to upgrade, chan
 | `fleets[].billing_status` | enum |  | everyone | Status of the fleet owner's Meter Fleet subscription; none when the fleet has never subscribed. Values: `active`, `trialing`, `past_due`, `unpaid`, `incomplete`, `incomplete_expired`, `paused`, `canceled`, `none`. |
 | `fleets[].billing_active` | boolean |  | everyone | Whether fleet billing counts as active (active, trialing or past_due). Fleet features lock when false. |
 | `fleets[].operational` | boolean |  | everyone | Whether the fleet is onboarded and paid, so fleet tools and driver features work. |
-| `fleets[].manage_actions` | array |  | everyone | get_action_link actions for this fleet's billing (pass fleet_id). Empty for admins: only the owner manages fleet billing. |
+| `fleets[].manage_actions` | array |  | everyone | get_action_link actions for this fleet's billing (include fleet_id). Empty for admins: only the owner manages fleet billing. |
 | `upgrade_actions` | array |  | everyone | get_action_link actions that start a plan this account does not have yet. Call list_plans to compare plans first. |
 | `checked_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
 ## PlanCatalog
@@ -491,7 +491,7 @@ A page of the signed-in actor’s assistant changes, with an opaque continuation
 | `items[].applied_at` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
 | `items[].redacted_at` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
 | `items[].error_code` | string\|null |  | everyone | Stable failure code, without internal error text. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## Whoami
 
@@ -506,7 +506,7 @@ Result of `whoami`: who is calling and what they may read.
 | `profile.phone` | string\|null |  | self | Your own phone number in E.164 (never shown for other users). |
 | `profile.created_at` | string\|null | ISO 8601 | everyone | When your Meter profile was created. |
 | `fleets` | array |  | everyone | Every fleet you belong to. Empty for riders and solo drivers. |
-| `fleets[].fleet_id` | string |  | everyone | Opaque fleet id. Pass as `fleet_id` to fleet-scoped tools. |
+| `fleets[].fleet_id` | string |  | everyone | Opaque fleet id. Send as `fleet_id` to fleet-scoped tools. |
 | `fleets[].name` | string\|null |  | everyone | Fleet display name. |
 | `fleets[].role` | enum |  | everyone | Role in the fleet. owner: created the fleet and controls billing; admin: manages members, vehicles, bookings and money; driver: drives and sees only their own trips, bookings and earnings. Values: `owner`, `admin`, `driver`. |
 | `fleets[].is_operational` | boolean |  | everyone | True when the fleet has finished onboarding and billing is active. Admin-only tools (members, accounting, fleet-wide trips) require an operational fleet. |
@@ -720,7 +720,7 @@ Result of list_trips: a page of trips, newest first.
 | `items[].payment_method` | string\|null |  | everyone | How the trip was paid: cash, card (Meter Pay), other, or null when not recorded. |
 | `items[].void_status` | enum\|null |  | everyone | Set when the driver asked to void the trip (void_requested) or an admin voided it (voided). Values: `void_requested`, `voided`. |
 | `items[].created_at` | string | ISO 8601 | everyone | When the trip was uploaded to Meter. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## RideRequest
 
@@ -939,7 +939,7 @@ A ride offered to the calling driver by realtime dispatch. Offers expire within 
 
 | Field | Type | Unit | Visible to | Description |
 | --- | --- | --- | --- | --- |
-| `dispatch_id` | string |  | everyone | Offer to pass to respond_to_dispatch_offer. |
+| `dispatch_id` | string |  | everyone | Offer to answer with respond_to_dispatch_offer. |
 | `booking_id` | string |  | everyone | Offered booking, for get_booking. |
 | `status` | enum |  | everyone | pending: waiting for this driver; accepted/declined: answered; expired: the driver did not answer in time; cancelled: withdrawn because the booking went to someone else or stopped waiting for a driver. Values: `pending`, `accepted`, `declined`, `expired`, `cancelled`. |
 | `expires_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
@@ -963,7 +963,7 @@ Pending dispatch offers.
 | Field | Type | Unit | Visible to | Description |
 | --- | --- | --- | --- | --- |
 | `items` | array |  | everyone | The caller's offers that are still waiting for an answer; empty when none. |
-| `items[].dispatch_id` | string |  | everyone | Offer to pass to respond_to_dispatch_offer. |
+| `items[].dispatch_id` | string |  | everyone | Offer to answer with respond_to_dispatch_offer. |
 | `items[].booking_id` | string |  | everyone | Offered booking, for get_booking. |
 | `items[].status` | enum |  | everyone | pending: waiting for this driver; accepted/declined: answered; expired: the driver did not answer in time; cancelled: withdrawn because the booking went to someone else or stopped waiting for a driver. Values: `pending`, `accepted`, `declined`, `expired`, `cancelled`. |
 | `items[].expires_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
@@ -1004,7 +1004,7 @@ Preview or confirmed answer to a dispatch offer.
 | `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
 | `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
 | `dispatch_offer` | object |  | everyone | A ride offered to the calling driver by realtime dispatch. Offers expire within seconds to minutes. |
-| `dispatch_offer.dispatch_id` | string |  | everyone | Offer to pass to respond_to_dispatch_offer. |
+| `dispatch_offer.dispatch_id` | string |  | everyone | Offer to answer with respond_to_dispatch_offer. |
 | `dispatch_offer.booking_id` | string |  | everyone | Offered booking, for get_booking. |
 | `dispatch_offer.status` | enum |  | everyone | pending: waiting for this driver; accepted/declined: answered; expired: the driver did not answer in time; cancelled: withdrawn because the booking went to someone else or stopped waiting for a driver. Values: `pending`, `accepted`, `declined`, `expired`, `cancelled`. |
 | `dispatch_offer.expires_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
@@ -1048,7 +1048,7 @@ Customers, most recent booking first.
 | `items[].email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
 | `items[].first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
 | `items[].last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
-| `next_cursor` | string\|null |  | everyone | Pass this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
 | `has_more` | boolean |  | everyone | True when another page exists. |
 ## CustomerDetail
 
