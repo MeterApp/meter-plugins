@@ -1,6 +1,6 @@
 {
   "name": "meter-fleet",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Meter for Drivers & Fleets, the taxi meter and fleet platform for AI agents. Ask about a fleet's trips, bookings, drivers, vehicles, earnings and accounting, see a driver's own trips and pay stubs, guide a new fleet through onboarding, and change settings with a dry run and your confirmation. Signs in with your Meter account in the browser.",
   "author": {
     "name": "Meter",
@@ -26,7 +26,7 @@
   "interface": {
     "displayName": "Meter for Drivers & Fleets",
     "shortDescription": "Drive or run a taxi fleet",
-    "longDescription": "Meter is the taxi meter and fleet platform: drivers run a meter in the Meter app, and fleets manage drivers, vehicles, fares, scheduled bookings and money. This plugin connects your agent to the hosted Meter for Drivers & Fleets MCP server with your own Meter sign-in, so it sees exactly what you see. Fleet owners get answers about trips, bookings, drivers, vehicles, earnings and accounting, a guided onboarding, and settings changes that apply only after a dry run and their confirmation. Drivers see their own trips and pay stubs and update their own availability and profile.",
+    "longDescription": "Meter is the taxi meter and fleet platform: drivers run a meter in the Meter app, and fleets manage drivers, vehicles, fares, scheduled bookings and money. This plugin connects your agent to the hosted Meter for Drivers & Fleets MCP server with your own Meter sign-in, so it sees exactly what you see. Fleet owners get answers about trips, bookings, drivers, vehicles, earnings and accounting, a guided onboarding, and tools to change service boundaries, fares, booking rules, website pages and custom domains after a preview and confirmation. Drivers see their own trips and pay stubs and update their own availability and profile.",
     "developerName": "Meter",
     "category": "Productivity",
     "capabilities": [
@@ -37,7 +37,7 @@
     "defaultPrompt": [
       "How much did my fleet earn last week, and which driver had the most trips?",
       "Which bookings are still unassigned for tomorrow morning?",
-      "Show me my own trips and card payouts for last week."
+      "Preview a change to my fleet’s base fare and show what riders would pay."
     ],
     "brandColor": "#106A57",
     "composerIcon": "./.claude-plugin/icon.png",

@@ -1,6 +1,6 @@
 interface:
   display_name: "Meter Settings Changes"
-  short_description: "Change fleet, booking, fare or personal settings with a dry run first"
+  short_description: "Preview and change fleet, driver, fare and website settings"
   default_prompt: "Use $meter-settings-changes to change a setting in Meter: dry run, show me the changes, then apply after I confirm."
 dependencies:
   tools:

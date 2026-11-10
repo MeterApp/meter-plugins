@@ -149,6 +149,10 @@ Generated from the `@meterapp/meter-sdk` catalog (server version 2.0.1); do not 
 | [`create_website_page`](tools/part-2.md#create_website_page) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | WebsitePageWrite |
 | [`update_website_page`](tools/part-2.md#update_website_page) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | WebsitePageWrite |
 | [`delete_website_page`](tools/part-2.md#delete_website_page) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | WebsitePageWrite |
+| [`get_fleet_site_domain`](tools/part-2.md#get_fleet_site_domain) | fleet_admin, fleet_owner | no | FleetSiteDomain |
+| [`connect_fleet_site_domain`](tools/part-2.md#connect_fleet_site_domain) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | FleetSiteDomainWrite |
+| [`check_fleet_site_domain`](tools/part-2.md#check_fleet_site_domain) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | FleetSiteDomainWrite |
+| [`disconnect_fleet_site_domain`](tools/part-2.md#disconnect_fleet_site_domain) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | FleetSiteDomainWrite |
 | [`get_storefront_settings`](tools/part-2.md#get_storefront_settings) | fleet_admin, fleet_owner | no | StorefrontSettings |
 | [`update_storefront_settings`](tools/part-2.md#update_storefront_settings) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | StorefrontSettingsWrite |
 | [`search_google_places`](tools/part-2.md#search_google_places) | fleet_admin, fleet_owner | no | GooglePlaceSearch |

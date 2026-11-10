@@ -1038,6 +1038,66 @@ Authorized attachment metadata and any short-lived download address.
 | `height` | number (optional) |  | everyone | Image height in pixels when available. |
 | `download_url` | string (optional) |  | everyone | Short-lived attachment URL authorized for this caller. |
 | `download_url_expires_at` | string (optional) |  | everyone | Expiry timestamp of the authorized attachment URL. |
+## FleetSiteDomain
+
+Custom domain settings for a fleet booking website.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string |  | everyone | Fleet ID. |
+| `configured` | boolean |  | everyone | Whether Meter can connect a custom domain. |
+| `domain` | object\|null |  | everyone | Current hostname and verification state, including the exact DNS records to enter at the provider. |
+| `domain.hostname` | string |  | everyone | The public custom hostname. |
+| `domain.source` | enum |  | everyone | Connected from an external provider or purchased in Meter. Values: `connected`, `purchased`. |
+| `domain.status` | enum |  | everyone | Whether payment, DNS verification, or renewal is pending, or the hostname is active. Values: `pending_purchase`, `pending_dns`, `active`, `expired`. |
+| `domain.pending_reason` | string\|null |  | everyone | The remaining ownership, DNS, or certificate check. |
+| `domain.dns_records` | array |  | everyone | Records Meter needs to verify and serve the hostname. |
+| `domain.dns_records[].type` | enum |  | everyone | DNS record type. Values: `A`, `CNAME`, `TXT`. |
+| `domain.dns_records[].name` | string |  | everyone | Name to enter at the DNS provider. |
+| `domain.dns_records[].value` | string |  | everyone | Exact value to enter for the record. |
+| `domain.dns_records[].purpose` | enum |  | everyone | Routes traffic or proves ownership. Values: `routing`, `ownership`. |
+| `domain.last_checked_at` | string\|null |  | everyone | Time of the last DNS check, if any. |
+| `domain.expires_at` | string\|null |  | everyone | Registration expiry for a domain purchased in Meter. |
+| `website_settings_url` | string |  | everyone | Meter console for domain purchases and renewals. Select the intended fleet there. |
+## FleetSiteDomainWrite
+
+Result of connecting, checking or disconnecting a custom domain.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `site_domain` | object |  | everyone | Custom domain settings for a fleet booking website. |
+| `site_domain.fleet_id` | string |  | everyone | Fleet ID. |
+| `site_domain.configured` | boolean |  | everyone | Whether Meter can connect a custom domain. |
+| `site_domain.domain` | object\|null |  | everyone | Current hostname and verification state, including the exact DNS records to enter at the provider. |
+| `site_domain.domain.hostname` | string |  | everyone | The public custom hostname. |
+| `site_domain.domain.source` | enum |  | everyone | Connected from an external provider or purchased in Meter. Values: `connected`, `purchased`. |
+| `site_domain.domain.status` | enum |  | everyone | Whether payment, DNS verification, or renewal is pending, or the hostname is active. Values: `pending_purchase`, `pending_dns`, `active`, `expired`. |
+| `site_domain.domain.pending_reason` | string\|null |  | everyone | The remaining ownership, DNS, or certificate check. |
+| `site_domain.domain.dns_records` | array |  | everyone | Records Meter needs to verify and serve the hostname. |
+| `site_domain.domain.dns_records[].type` | enum |  | everyone | DNS record type. Values: `A`, `CNAME`, `TXT`. |
+| `site_domain.domain.dns_records[].name` | string |  | everyone | Name to enter at the DNS provider. |
+| `site_domain.domain.dns_records[].value` | string |  | everyone | Exact value to enter for the record. |
+| `site_domain.domain.dns_records[].purpose` | enum |  | everyone | Routes traffic or proves ownership. Values: `routing`, `ownership`. |
+| `site_domain.domain.last_checked_at` | string\|null |  | everyone | Time of the last DNS check, if any. |
+| `site_domain.domain.expires_at` | string\|null |  | everyone | Registration expiry for a domain purchased in Meter. |
+| `site_domain.website_settings_url` | string |  | everyone | Meter console for domain purchases and renewals. Select the intended fleet there. |
 ## StorefrontSettings
 
 The fleet's public booking website: address, copy, brand colors, contact numbers and Google listing.
@@ -1257,56 +1317,3 @@ Booking-site marketing funnel: visits, estimates, bookings, value and traffic so
 | `timeline[].storefront_views` | number\|null |  | everyone | Booking page views. |
 | `timeline[].bookings_created` | number\|null |  | everyone | Bookings created. |
 | `timeline[].bookings_completed` | number\|null |  | everyone | Bookings completed. |
-## DriverPerformance
-
-Driver productivity: trips, revenue, time online, utilization and empty miles per driver.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `fleet_id` | string |  | everyone | Fleet ID. |
-| `currency` | string |  | everyone | Currency of revenue values (ISO 4217). |
-| `from` | string | ISO 8601 | everyone | Window start (inclusive). |
-| `to` | string | ISO 8601 | everyone | Window end. |
-| `summary` | object |  | everyone | Fleet-wide totals for the window. |
-| `summary.driver_count` | number |  | everyone | Drivers in the fleet. |
-| `summary.active_driver_count` | number |  | everyone | Drivers with activity. |
-| `summary.trip_count` | number |  | everyone | Completed trips. |
-| `summary.shift_count` | number |  | everyone | Shifts. |
-| `summary.revenue_minor` | number | minor currency units | everyone | Trip revenue. |
-| `summary.revenue_per_hour_minor` | number | minor currency units | everyone | Revenue per working hour. |
-| `summary.working_seconds` | number | seconds | everyone | Total time online. |
-| `summary.utilization_rate` | number |  | everyone | Share of online time spent on trips, 0-1. |
-| `summary.empty_distance_percent` | number |  | everyone | Share of distance driven without a rider, 0-100. |
-| `drivers` | array |  | everyone | Drivers with the highest revenue first. |
-| `drivers[].driver_id` | string |  | everyone | Driver profile ID. |
-| `drivers[].driver_name` | string |  | everyone | Driver name. |
-| `drivers[].trip_count` | number |  | everyone | Completed trips. |
-| `drivers[].shift_count` | number |  | everyone | Shifts (online sessions). |
-| `drivers[].revenue_minor` | number | minor currency units | everyone | Trip revenue. |
-| `drivers[].revenue_per_hour_minor` | number | minor currency units | everyone | Revenue per working hour. |
-| `drivers[].working_seconds` | number | seconds | everyone | Time online. |
-| `drivers[].active_seconds` | number | seconds | everyone | Time on trips. |
-| `drivers[].idle_seconds` | number | seconds | everyone | Online time without a trip. |
-| `drivers[].utilization_rate` | number |  | everyone | Share of online time spent on trips, 0-1. |
-| `drivers[].total_distance_meters` | number | meters | everyone | Distance driven online. |
-| `drivers[].empty_distance_percent` | number |  | everyone | Share of distance driven without a rider, 0-100. |
-| `drivers[].trips_per_shift` | number |  | everyone | Average trips per shift. |
-| `drivers_truncated` | boolean |  | everyone | True when more drivers exist than `limit`; filter with driver_id. |
-## PrivacySettings
-
-Fleet privacy settings: driver location sharing and which drivers riders may request by name.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `fleet_id` | string |  | everyone | Fleet ID. |
-| `show_driver_locations` | boolean\|null |  | everyone | Whether riders see driver locations; change it with update_fleet_settings. |
-| `driver_requests_enabled` | boolean |  | everyone | Whether riders may request a specific driver when booking. |
-| `driver_requests_visibility` | enum |  | everyone | Who sees the requestable drivers: signed-in riders only, or anyone on the public booking page too. Values: `signed_in_only`, `public_and_signed_in`. |
-| `max_requestable_drivers` | number |  | everyone | Most drivers that can be requestable at once. |
-| `drivers` | array |  | everyone | Every driver in the fleet, published ones first in rider order. |
-| `drivers[].driver_id` | string |  | everyone | Driver profile ID. |
-| `drivers[].name` | string\|null |  | everyone | Driver's name as the fleet knows it (not shown to riders). |
-| `drivers[].display_name` | string |  | everyone | Name riders see when requesting this driver. |
-| `drivers[].published` | boolean |  | everyone | True when riders can currently request this driver. |
-| `drivers[].show_profile_photo` | boolean |  | everyone | True when riders see the driver's profile photo. |
-| `drivers[].has_profile_photo` | boolean |  | everyone | Whether the driver has a profile photo that could be shown. |

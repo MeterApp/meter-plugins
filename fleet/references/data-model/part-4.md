@@ -2,6 +2,74 @@
 
 Generated from the `@meterapp/meter-sdk` catalog and DTO schemas; do not edit by hand. See the [reference index](../data-model.md) for all definitions.
 
+## OperatorBookingWrite
+
+Preview or result of create_booking.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `booking` | object |  | everyone | A booking an operator creates for a customer: preview, or the created booking. |
+| `booking.booking_id` | string\|null |  | everyone | Created booking id for get_booking; null in a preview. |
+| `booking.status` | enum\|null |  | everyone | Booking status after creation; null in a preview. Values: `pending`, `confirmed`, `in_progress`, `completed`, `canceled`, `pending_payment`. |
+| `booking.fleet_id` | string |  | everyone | Fleet taking the booking. |
+| `booking.fleet_name` | string\|null |  | everyone | Fleet display name. |
+| `booking.customer` | object |  | everyone | Who rides. |
+| `booking.customer.rider_id` | string\|null |  | everyone | Customer id; null in a preview of a customer Meter does not know yet. |
+| `booking.customer.first_name` | string\|null |  | everyone | First name, or null. |
+| `booking.customer.last_name` | string\|null |  | everyone | Last name, or null. |
+| `booking.customer.phone` | string\|null |  | owner, admin, self | Phone (E.164), or null. |
+| `booking.customer.email` | string\|null |  | owner, admin, self | Email, or null. |
+| `booking.customer.is_new` | boolean |  | everyone | True when confirming creates this customer (a new Meter rider or a rider new to your customers). |
+| `booking.pickup` | object |  | everyone | Pickup. |
+| `booking.pickup.name` | string\|null |  | everyone | Place name, or null. |
+| `booking.pickup.address` | string\|null |  | everyone | Formatted address, or null. |
+| `booking.dropoff` | object\|null |  | everyone | Drop-off, or null for a metered ride without one. |
+| `booking.dropoff.name` | string\|null |  | everyone | Place name, or null. |
+| `booking.dropoff.address` | string\|null |  | everyone | Formatted address, or null. |
+| `booking.stops` | array |  | everyone | Intermediate stops in order. |
+| `booking.stops[].name` | string\|null |  | everyone | Place name, or null. |
+| `booking.stops[].address` | string\|null |  | everyone | Formatted address, or null. |
+| `booking.pickup_time` | string\|null | ISO 8601 | everyone | Pickup time (ISO 8601 with offset), or null for as soon as possible. |
+| `booking.timezone` | string\|null |  | everyone | IANA timezone of the pickup. |
+| `booking.passengers` | number |  | everyone | Passenger count. |
+| `booking.ride_option` | object |  | everyone | Ride option booked. |
+| `booking.ride_option.ride_option_id` | string |  | everyone | Ride option id. |
+| `booking.ride_option.name` | string |  | everyone | Ride option name. |
+| `booking.ride_option.capacity` | number\|null |  | everyone | Maximum passengers, or null. |
+| `booking.price` | object |  | everyone | Quoted fare the customer pays. |
+| `booking.price.amount_minor` | number | minor currency units | everyone | Price the rider is quoted, in minor units. |
+| `booking.price.currency` | string |  | everyone | ISO 4217 currency code, upper-case. |
+| `booking.price.display` | string |  | everyone | Price formatted for the human in the request locale. |
+| `booking.price.mode` | enum |  | everyone | fixed: the quoted price is the fare; estimate: the final fare can change (for example overtime); metered: charged by the meter, the amount is an estimate. Values: `fixed`, `estimate`, `metered`. |
+| `booking.price.disclosure` | string\|null |  | everyone | Pricing disclosure to show the human before confirming, or null. |
+| `booking.payment` | enum |  | everyone | after_trip: nothing is charged at booking; the customer pays the driver after the ride (cash, card in person or an invoice). For upfront payment through a Meter link use create_quote then send_quote instead. Values: `after_trip`. |
+| `booking.cancellation_policy` | object |  | everyone | Cancellation policy that applies to the customer. |
+| `booking.cancellation_policy.grace_period_seconds` | number | seconds | everyone | Free cancellation window after booking. |
+| `booking.cancellation_policy.fee_minor` | number\|null | minor currency units | everyone | Fee for cancelling after the free window, in minor units; null when unknown or none. |
+| `booking.cancellation_policy.currency` | string\|null |  | everyone | Currency of the fee, or null. |
+| `booking.cancellation_policy.summary` | string |  | everyone | One-sentence policy summary for the human. |
+| `booking.notes` | string\|null |  | everyone | Notes for the driver, or null. |
+| `booking.flight_number` | string\|null |  | everyone | Flight number, or null. |
+| `booking.driver_id` | string\|null |  | everyone | Driver requested for the booking, or null for the fleet's dispatch to pick one. |
+| `booking.driver_assignment` | enum |  | everyone | none: no driver chosen. requested: a preview that assigns driver_id on confirm. assigned: the driver has the booking. failed: the booking exists but the assignment was refused; use assign_booking. Values: `none`, `requested`, `assigned`, `failed`. |
+| `booking.customer_notifications` | array |  | everyone | How the customer is told about the booking (confirmation with a tracking link). Empty when Meter has no phone or email for them. |
 ## QuoteBookingConversion
 
 A quote turned into a booking by its operator.

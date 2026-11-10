@@ -49,7 +49,7 @@ Five skills and the hosted MCP server.
 | --- | --- |
 | `meter-fleet-insights` | Questions about a fleet's trips, bookings, drivers, vehicles, earnings and accounting |
 | `meter-fleet-onboarding` | Walking a new fleet owner through setup with the onboarding checklist and settings tools |
-| `meter-settings-changes` | Changing fleet, booking, ride-option or personal settings: dry run, confirm, apply |
+| `meter-settings-changes` | Changing fleet and driver settings, including service areas, fares, booking rules, website pages and custom domains |
 | `meter-driver-personal` | An individual driver's own trips, earnings, pay stubs, availability and profile |
 | `meter-api-explainer` | "How does this work / what does this field mean", and drafting integrations |
 
@@ -57,7 +57,7 @@ The MCP server at `https://www.meterapp.co/api/mcp/fleet` provides the tools lis
 
 ## Sign-in
 
-Your host opens the Meter sign-in (OAuth 2.1) and keeps the connection. The host finds the sign-in from the server's 401 answer and its metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet`. The plugin itself asks you for nothing: you only ever sign in on meterapp.co. Details in [references/authorization.md](references/authorization.md).
+Your host opens the Meter sign-in (OAuth 2.1) and keeps the connection. The host finds the sign-in from the server's 401 answer and its metadata at `https://www.meterapp.co/.well-known/oauth-protected-resource/api/mcp/fleet`. The plugin itself asks you for nothing: you only ever sign in on meterapp.co. Choose **Look and change** to make settings changes. To update an existing connection, go to [Connected apps](https://www.meterapp.co/app/account/connected-apps), change its access, then start a new session to refresh the tools. See [authorization details](references/authorization.md).
 
 ## Safety model
 

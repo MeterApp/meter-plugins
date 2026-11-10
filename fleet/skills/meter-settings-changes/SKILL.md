@@ -1,6 +1,6 @@
 ---
 name: meter-settings-changes
-description: "Safely change Meter fleet settings, booking settings, ride options and fares, vehicle assignments, or the signed-in person's own profile and availability through the Meter MCP write tools (update_fleet_settings, update_booking_settings, update_ride_option, assign_vehicle, update_my_profile, update_my_availability). Enforces the dry_run: true preview, echo changes, explicit confirmation, apply sequence. Use whenever a request would modify fleet settings or the person's own profile in Meter; do not use for read-only questions (meter-fleet-insights, meter-driver-personal), for first-time fleet setup as a whole (meter-fleet-onboarding), or for booking, changing or cancelling a ride as a rider (the Meter Rides plugin)."
+description: "Configure Meter driver and fleet settings, including service areas and boundaries, fares and pricing, booking and dispatch rules, website pages and custom domains, branding, privacy, fees, vehicles, members, profile and availability. Use the matching Meter tool with a saved preview and explicit confirmation. Use for a requested change. Do not use for read-only questions, full fleet onboarding, or rider bookings."
 ---
 
 # Changing settings in Meter
@@ -28,7 +28,7 @@ A preview includes the following envelope (with the returned proposal ID saved f
 
 ## The sequence, every time
 
-1. **Read first.** `whoami` for the role, then the matching read tool (`get_fleet` for fleet, booking and ride-option settings; `list_vehicles` and `list_fleet_members` for assignments). Quote the current value.
+1. **Read first.** Check the role and connection access with `whoami`, then call the matching read tool below. Quote the current value.
 2. **Dry run.** Call the write tool with `dry_run: true` and only the fields the human named. Never send fields "to be safe"; omitted fields are left alone and unknown fields are rejected.
 3. **Echo the changes.** Show `changes` exactly as returned: each `field` with its `from` and `to` value, plus any warnings. If the list is empty, say nothing would change and stop.
 4. **Ask.** One clear question: "Apply these N changes to <fleet name>? (yes/no)". Wait for the answer. A vague reply ("sure, whatever works") is not a yes for money fields; ask again with the numbers.
@@ -38,23 +38,30 @@ Never skip the dry run because the change "is small", never apply in the same tu
 
 ## Money changes need the numbers
 
-Fares (`update_ride_option`: `fare.base`, `fare.minimum_fare`, `fare.distance_rate`, `fare.minute_rate`, `fare.wait_time_minute_rate`, `fare.tax_rate`, in major currency units as shown in the console, 0 to 10000) and cancellation fees (`update_booking_settings`) are money. State `from` and `to` with the currency, e.g. "Base fare: 3.50 -> 4.00 USD". If the human gave a percentage or a vague direction ("raise it a bit"), compute the concrete value, show it, and get a yes on the concrete value. Official government tariffs cannot be edited; the tool says so.
+Fares (check the units for the specific fare tool) and cancellation fees (`update_booking_settings`) are money. State `from` and `to` with the currency, for example, "Base fare goes from 3.50 to 4.00 USD". If the human gave a percentage or a vague direction ("raise it a bit"), compute the concrete value, show it, and get a yes on the concrete value. Official government tariffs cannot be edited; the tool says so.
 
-## Who may change what
+## Find the right tool
 
-| Tool | Role |
+Use the connected server's tool list and `describe_api` to find the exact operation and `explain_data` for argument details. This table gives common paths. The connected catalog determines what is available.
+
+| Setting | Tools |
 | --- | --- |
-| `update_fleet_settings`, `update_booking_settings`, `update_ride_option`, `assign_vehicle` | fleet owner or admin of an operational fleet |
-| `update_my_profile`, `update_my_availability` | the signed-in person, for themselves only |
+| Fleet profile, branding and contact information | `get_fleet`, `update_fleet_settings` |
+| Service areas, pickup and drop-off boundaries | `list_service_zones`, `find_zone_boundary`, `save_service_zone` |
+| Fares, flat rates and ride options | `list_fares`, `get_fare`, `create_fare`, `update_fare`, `delete_fare`, `list_zone_fares`, `set_zone_fare`, `set_zone_fares`, and the ride option tools |
+| Booking rules, dispatch, cancellation and fees | `get_fleet`, `update_booking_settings`, `update_fee_settings`, `get_dynamic_pricing`, `update_dynamic_pricing` |
+| Website address and pages | `get_storefront_settings`, `update_storefront_settings` for the Meter address, `update_fleet_settings` for branding and contact details, and the website page tools |
+| Existing custom domain | `get_fleet_site_domain`, `connect_fleet_site_domain`, `check_fleet_site_domain`, `disconnect_fleet_site_domain` |
+| Google listing and reviews | `search_google_places`, `link_google_maps_place`, `unlink_google_maps_place` |
+| Privacy and voice agent | `get_privacy_settings`, `update_privacy_settings`, `get_voice_agent_settings`, `update_voice_agent_settings` |
+| Vehicle and member settings | `list_vehicles`, `list_fleet_members`, the vehicle and member tools, and `assign_vehicle` |
+| Personal details and schedule | `whoami`, `update_my_profile`, `update_my_availability`. Availability replaces the whole week, so include every intended working day. |
 
-A `forbidden` error is final for that person. Do not retry with another fleet or another id; explain who can make the change. Every write is attributed to the signed-in person in Meter's audit trail exactly as if they had used the app.
+Use the signed-in person's role and scope. Fleet-wide settings normally require a fleet owner or admin. For a domain, show the exact hostname and which fleet it will serve. After connecting, relay the returned DNS records and ask the person to enter them at their provider. Report the site as live only when the tool returns `active`. For a domain purchase or renewal, open the returned Website settings link for the person to complete in Meter.
 
-## Scope discipline
+If `whoami.connection.access` is `read`, show the person [Connected apps](https://www.meterapp.co/app/account/connected-apps) and ask them to switch this connection to **Look and change**. Refresh the tool list or start a new session after they grant access. If the connection is writable and the tool is missing, say which operation is unavailable in this connection. Use a relevant Meter page for actions the person must finish themselves, such as account authorization, billing and bank setup. Never report a change without an applied result.
 
-- One request, one tool, one fleet. If the human asks for changes across several fleets or several ride options, run the sequence once per target.
-- Do not change settings the human did not mention because a dry run surfaced something else; report it and ask.
-- The write tools do not create or delete ride options, vehicles or members, do not change a fare's currency, and never touch billing, payouts or the join code. For those, point to the web console at `https://www.meterapp.co/app/fleet`.
-- `update_my_availability` replaces the whole week: include every day the driver works, not just the one that changes.
+Run the preview and approval separately for each target. Use only IDs returned by Meter. When `find_zone_boundary` returns multiple possible boundaries, confirm the intended area before saving it.
 
 ## From a terminal
 
@@ -62,7 +69,7 @@ A `forbidden` error is final for that person. Do not retry with another fleet or
 
 ## After a change
 
-Summarize what changed (the `to` values), and mention how to undo it: the same tool with the `from` values, again through a dry run.
+Summarize the applied result. If the change can be reversed, explain the matching operation and preview it if the person requests it.
 
 ## References
 

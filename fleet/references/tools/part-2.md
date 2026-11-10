@@ -1045,6 +1045,73 @@ Example:
 ```json
 {"name":"delete_website_page","arguments":{"page_id":"00000000-0000-4000-8000-000000000001","dry_run":true}}
 ```
+## get_fleet_site_domain
+
+**Get fleet website domain** · personas: `fleet_admin, fleet_owner` · read-only · returns `FleetSiteDomain`
+
+Read the fleet booking website's custom domain, DNS instructions, verification status and link to domain settings. Use before connecting, checking or disconnecting a domain.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+
+Example:
+
+```json
+{"name":"get_fleet_site_domain","arguments":{}}
+```
+## connect_fleet_site_domain
+
+**Connect a fleet website domain** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `FleetSiteDomainWrite`
+
+Connect an existing domain to the fleet booking website. Preview with dry_run: true, then apply the saved proposal. Returns DNS records to add at the user's provider. Use the Meter website settings link to buy or renew a domain.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+| `hostname` | string | yes |  | An existing domain or subdomain the fleet controls, e.g. rides.example.com. |
+
+Example:
+
+```json
+{"name":"connect_fleet_site_domain","arguments":{"hostname":"rides.example.com","dry_run":true}}
+```
+## check_fleet_site_domain
+
+**Verify a fleet website domain** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `FleetSiteDomainWrite`
+
+Check DNS, ownership and HTTPS after records are set. This can activate the domain and change the public website address, so preview with dry_run: true and confirm. Use get_fleet_site_domain for a read-only status check.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+
+Example:
+
+```json
+{"name":"check_fleet_site_domain","arguments":{"dry_run":true}}
+```
+## disconnect_fleet_site_domain
+
+**Disconnect a fleet website domain** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `FleetSiteDomainWrite`
+
+Disconnect an existing externally registered domain after a dry_run: true preview and confirmation. The hostname stops serving the fleet site. Domains purchased through Meter cannot be disconnected here.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+
+Example:
+
+```json
+{"name":"disconnect_fleet_site_domain","arguments":{"dry_run":true}}
+```
 ## get_storefront_settings
 
 **Get booking website settings** · personas: `fleet_admin, fleet_owner` · read-only · returns `StorefrontSettings`
