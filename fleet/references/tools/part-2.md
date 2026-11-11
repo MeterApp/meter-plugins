@@ -2,6 +2,89 @@
 
 Generated from the `@meterapp/meter-sdk` catalog and DTO schemas; do not edit by hand. See the [reference index](../tools.md) for all definitions.
 
+## get_booking_audit_log
+
+**Get booking timeline** · personas: `solo_driver, fleet_driver, fleet_admin, fleet_owner, rider` · read-only · returns `BookingAuditLog`
+
+Return the redacted activity timeline of one booking, newest first: status changes, driver assignments, edits to time or route, payment events and notifications sent, each with a timestamp, title, one-line summary, the ROLE of who acted (owner, admin, driver, fleet_member, rider or system; never a name or id) and redacted field-level before/after values. Allowed for the same viewers as get_booking. Use it to answer "what happened to this booking and when"; use get_booking for the current state.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `booking_id` | string (uuid) | yes |  | Booking id from list_bookings or get_booking. |
+| `cursor` | string | no |  | Opaque cursor from the previous page's next_cursor. Omit for the first page. |
+| `limit` | integer | no | `50` | Page size, 1-100 (default 50). |
+
+Example:
+
+```json
+{"name":"get_booking_audit_log","arguments":{"booking_id":"33333333-3333-4333-8333-333333333333","limit":20}}
+```
+## update_booking_settings
+
+**Update booking settings** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingSettingsWrite`
+
+Change a fleet's booking policy: dispatch mode (manual, all online drivers, auto-dispatch), payment mode (card when booking, or pay the driver after the trip), minimum lead time, hourly-booking slot size and minimum duration, rider cancellation fee fraction/minimum and free-cancellation grace period, driver cancellation reasons/fee mode/no-show wait/post-pickup rule, and owner booking emails. Owners and admins only, also while the fleet is still completing setup (a fleet whose billing has lapsed returns fleet_not_operational). Send only the fields to change; values outside the allowed sets are rejected. Call with dry_run: true first to preview. Creates the booking settings record when the fleet has none yet. Not for fares or ride options (use update_ride_option).
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `availability` | array of object | no |  | Weekly booking hours in fleet timezone. Omitted days become open all day; the last duplicate day wins. Preview shows the normalized full week. |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+| `dispatch_mode` | "NONE" \| "ALL_ONLINE_DRIVERS" \| "AUTO_DISPATCH" | no |  | NONE: dispatcher assigns manually; ALL_ONLINE_DRIVERS: offer to every online driver; AUTO_DISPATCH: nearest available driver. |
+| `payment_mode` | "disabled" \| "payments_optional" \| "pre_payment_required" | no |  | pre_payment_required: riders add a card when they book, authorized before pickup; payments_optional: no card at booking, riders pay the driver after the trip; disabled: deprecated alias, stored as payments_optional. |
+| `min_lead_time_seconds` | integer | no |  | Minimum notice between booking and pickup, in seconds (0 to 30 days). |
+| `time_slot_minutes` | 15 \| 30 \| 45 \| 60 \| null | no |  | Hourly-booking slot size: 15, 30, 45 or 60. Null to unset. |
+| `minimum_duration_minutes` | integer \| null | no |  | Minimum length of an hourly booking in minutes; must be a multiple of time_slot_minutes and at least one slot. Null to unset. |
+| `cancellation_fee_fraction` | number | no |  | Rider cancellation fee as a fraction of the fare, 0 to 1. |
+| `cancellation_fee_minimum_unit_amount` | integer | no |  | Minimum rider cancellation fee in minor currency units (e.g. 500 = $5.00). |
+| `cancellation_grace_period_seconds` | 0 \| 300 \| 600 \| 1800 \| 3600 \| 21600 \| 43200 \| 86400 | no |  | Free-cancellation window after booking: 0, 300, 600, 1800, 3600, 21600, 43200 or 86400 seconds. |
+| `driver_cancellation_allowed_reasons` | array of "vehicle_issue" \| "safety" \| "payment_dispute" \| "address_unreachable" \| "rider_request" \| "driver_other" | no |  | Reasons a driver may choose when cancelling an accepted booking. |
+| `driver_cancellation_fee_mode` | "none" \| "standard_cancellation_fee" \| "support_review" | no |  | none: no fee when a driver cancels; standard_cancellation_fee: charge the standard fee; support_review: Meter support decides. |
+| `driver_no_show_grace_period_seconds` | 0 \| 60 \| 180 \| 300 \| 600 \| 900 | no |  | How long a driver waits at pickup before reporting a no-show: 0, 60, 180, 300, 600 or 900 seconds. |
+| `driver_post_pickup_cancellation_mode` | "disabled" \| "driver_cancel" \| "support_approval" | no |  | disabled: drivers cannot cancel after pickup; driver_cancel: they can; support_approval: Meter support must approve. |
+| `owner_booking_email_enabled` | boolean | no |  | Email the fleet owner about each new booking. |
+
+Example:
+
+```json
+{"name":"update_booking_settings","arguments":{"fleet_id":"11111111-1111-4111-8111-111111111111","dry_run":true,"min_lead_time_seconds":3600,"cancellation_grace_period_seconds":600,"payment_mode":"pre_payment_required"}}
+```
+## assign_booking
+
+**Assign a booking driver** · personas: `fleet_owner, fleet_admin` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingChangeWrite`
+
+Assign a current fleet driver to an existing booking. Owners and admins only. Preview with dry_run, show the scheduled time and old/new driver, then apply the saved proposal_id with identical arguments. Retains the rider's payment requirement; never charges, authorizes a card or creates a booking. Current status, schedule and assignment must still match the preview.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `booking_id` | string (uuid) | yes |  | Booking from get_booking or list_bookings. |
+| `driver_id` | string (uuid) | yes |  | Current driver member of the booking fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+
+Example:
+
+```json
+{"name":"assign_booking","arguments":{"booking_id":"33333333-3333-4333-8333-333333333333","driver_id":"44444444-4444-4444-8444-444444444444","dry_run":true}}
+```
+## unassign_booking
+
+**Remove a booking driver assignment** · personas: `fleet_owner, fleet_admin` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingChangeWrite`
+
+Remove the driver assignment from a fleet booking. Owners and admins only. Preview with dry_run: true, showing the scheduled time and current driver before applying the saved proposal. Preserves payment state and does not cancel the booking, charge or refund. Cannot change an in-progress or terminal booking.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `booking_id` | string (uuid) | yes |  | Booking whose driver assignment should be removed. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+
+Example:
+
+```json
+{"name":"unassign_booking","arguments":{"booking_id":"33333333-3333-4333-8333-333333333333","dry_run":true}}
+```
 ## update_booking
 
 **Change a booking rider** · personas: `fleet_owner, fleet_admin, fleet_driver, solo_driver` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingChangeWrite`
@@ -55,6 +138,69 @@ Example:
 
 ```json
 {"name":"send_payment_reminder","arguments":{"booking_id":"33333333-3333-4333-8333-333333333333","dry_run":true}}
+```
+## list_booking_blocks
+
+**List booking blocks** · personas: `solo_driver, fleet_admin, fleet_owner` · read-only · returns `BookingBlockList`
+
+Read dated closures and active indefinite pauses on your personal booking calendar or a fleet calendar you administer. Use before editing or removing a block.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `scope` | "individual" \| "fleet" | yes |  | Use individual for your own booking calendar or fleet for a fleet you administer. |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+| `from` | string (date-time) | no |  | Include blocks ending after this instant. Defaults to now. |
+| `to` | string (date-time) | no |  | Include blocks starting before this instant. |
+
+Example:
+
+```json
+{"name":"list_booking_blocks","arguments":{"scope":"fleet"}}
+```
+## save_booking_block
+
+**Save a booking block or pause** · personas: `solo_driver, fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingBlockWrite`
+
+Add or edit a calendar block for a dated closure or pause new bookings until resumed. Use dry_run: true and confirm the saved proposal before applying. Existing bookings keep their reservations.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `scope` | "individual" \| "fleet" | yes |  | Use individual for your own booking calendar or fleet for a fleet you administer. |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+| `block_id` | string (uuid) | no |  | A block ID from list_booking_blocks. Omit to create. |
+| `all_day` | boolean | yes |  | True to block local dates. False to specify instants or pause indefinitely. |
+| `date_start` | string (date) | no |  | First local date to block, inclusive. |
+| `date_end` | string (date) | no |  | Last local date to block, inclusive. |
+| `starts_at` | string (date-time) | no |  | Start instant with offset for a timed block. Omit for an immediate pause. |
+| `ends_at` | string (date-time) \| null | no |  | Exclusive end for a timed block. Null pauses bookings until resumed. |
+| `timezone` | string | no |  | IANA timezone. Defaults to the calendar's saved timezone. |
+| `note` | string \| null | no |  | Private note. Null clears the note; omission preserves it. |
+
+Example:
+
+```json
+{"name":"save_booking_block","arguments":{"scope":"fleet","all_day":false,"ends_at":null,"dry_run":true}}
+```
+## remove_booking_block
+
+**Remove a booking block or pause** · personas: `solo_driver, fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `BookingBlockWrite`
+
+Remove an upcoming closure or resume new bookings by removing the indefinite pause. Use dry_run: true and confirm the saved proposal before applying. Existing bookings keep their reservations.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `scope` | "individual" \| "fleet" | yes |  | Use individual for your own booking calendar or fleet for a fleet you administer. |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+| `block_id` | string (uuid) | yes |  | Block ID from list_booking_blocks. Removing the indefinite pause resumes bookings. |
+
+Example:
+
+```json
+{"name":"remove_booking_block","arguments":{"scope":"fleet","block_id":"44444444-4444-4444-8444-444444444444","dry_run":true}}
 ```
 ## accept_booking
 
@@ -1314,11 +1460,33 @@ Example:
 ```json
 {"name":"update_voice_agent_settings","arguments":{"dry_run":true,"custom_instructions":"Greet callers as Austin Airport Cabs."}}
 ```
+## update_notification_webhook
+
+**Update a fleet notification webhook** · personas: `fleet_admin, fleet_owner` · writes (preview with `dry_run: true`, then confirm `proposal_id`) · returns `NotificationWebhookWrite`
+
+Pause or enable delivery and change event, category or channel filters for an existing fleet webhook. Preview with dry_run: true and show its destination host and filter changes before confirming. Use the console to change the URL or manage signing.
+
+| Argument | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string (uuid) | no |  | Fleet id from whoami or list_fleets. Optional when the caller belongs to exactly one fleet. |
+| `dry_run` | boolean | no | `false` | When true, validate and authorize the request and return the would-be changes without writing anything. Always preview before confirming; calls without a saved preview write nothing. |
+| `proposal_id` | string (uuid) | no |  | Saved proposal to confirm. Repeat the original intended arguments unchanged after showing the human all changes. |
+| `webhook_id` | string (uuid) | yes |  | Webhook ID from list_notification_webhooks. |
+| `is_active` | boolean | no |  | Enable or pause delivery to the existing destination. |
+| `event_types` | array of string | no |  | Event types to deliver. An empty list delivers all types. |
+| `categories` | array of string | no |  | Notification categories to deliver. An empty list delivers all categories. |
+| `channels` | array of "email" \| "sms" \| "whatsapp" \| "push" | no |  | Delivery channels to include. An empty list includes all channels. |
+
+Example:
+
+```json
+{"name":"update_notification_webhook","arguments":{"webhook_id":"44444444-4444-4444-8444-444444444444","is_active":false,"dry_run":true}}
+```
 ## list_notification_webhooks
 
 **List notification webhooks** · personas: `fleet_admin, fleet_owner` · read-only · returns `NotificationWebhooks`
 
-List the fleet's notification webhook subscriptions: receiving host, active state, event filters and signing rotation time. Signing values and full URLs are never returned. Owners and admins of an operational fleet. Adding, testing, rotating or removing a webhook happens on the console page in manage_url.
+List the fleet's notification webhook subscriptions: receiving host, active state, event filters and signing rotation time. Signing values and full URLs are never returned. Owners and admins of an operational fleet. Use update_notification_webhook for delivery settings and the console link to add, test or rotate a webhook.
 
 | Argument | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |

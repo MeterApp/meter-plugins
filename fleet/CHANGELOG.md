@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.5 (2026-11-11)
+
+Configure personal booking policies, driver websites and notification preferences. Manage booking blocks and pauses on personal and fleet calendars, update existing fleet webhooks, and remove unused service zones.
+
 ## 2.0.4 (2026-11-10)
 
 Fleet admins can connect an existing custom domain, check its DNS status, or disconnect it after confirmation. Settings guidance now covers service boundaries, fares and websites, and explains how to enable changes.

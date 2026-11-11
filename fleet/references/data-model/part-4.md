@@ -2,6 +2,267 @@
 
 Generated from the `@meterapp/meter-sdk` catalog and DTO schemas; do not edit by hand. See the [reference index](../data-model.md) for all definitions.
 
+## DispatchOffers
+
+Pending dispatch offers.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `items` | array |  | everyone | The caller's offers that are still waiting for an answer; empty when none. |
+| `items[].dispatch_id` | string |  | everyone | Offer to answer with respond_to_dispatch_offer. |
+| `items[].booking_id` | string |  | everyone | Offered booking, for get_booking. |
+| `items[].status` | enum |  | everyone | pending: waiting for this driver; accepted/declined: answered; expired: the driver did not answer in time; cancelled: withdrawn because the booking went to someone else or stopped waiting for a driver. Values: `pending`, `accepted`, `declined`, `expired`, `cancelled`. |
+| `items[].expires_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
+| `items[].scheduled_time` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
+| `items[].pickup` | object\|null |  | everyone | A pickup or drop-off place. Coordinates and raw GPS are never exposed here. |
+| `items[].pickup.name` | string\|null |  | everyone | Short place name (e.g. business or airport name), or null. |
+| `items[].pickup.address` | string\|null |  | everyone | Formatted street address, or null. |
+| `items[].dropoff` | object\|null |  | everyone | A pickup or drop-off place. Coordinates and raw GPS are never exposed here. |
+| `items[].dropoff.name` | string\|null |  | everyone | Short place name (e.g. business or airport name), or null. |
+| `items[].dropoff.address` | string\|null |  | everyone | Formatted street address, or null. |
+| `items[].pickup_distance_meters` | number\|null | meters | everyone | Driving distance from the driver to the pickup when offered. |
+| `items[].pickup_duration_seconds` | number\|null | seconds | everyone | Driving time from the driver to the pickup when offered. |
+| `items[].trip_distance_meters` | number\|null | meters | everyone | Pickup-to-drop-off route distance. |
+| `items[].trip_duration_seconds` | number\|null | seconds | everyone | Pickup-to-drop-off route duration. |
+| `items[].expected_payout` | number\|null | minor currency units | everyone | What the driver is expected to earn after fees and fleet share, in minor units; null when unknown. |
+| `items[].currency` | string\|null |  | everyone | ISO 4217 currency code, lower- or upper-case as stored (e.g. "usd", "EUR"). |
+## DispatchOfferWrite
+
+Preview or confirmed answer to a dispatch offer.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `dispatch_offer` | object |  | everyone | A ride offered to the calling driver by realtime dispatch. Offers expire within seconds to minutes. |
+| `dispatch_offer.dispatch_id` | string |  | everyone | Offer to answer with respond_to_dispatch_offer. |
+| `dispatch_offer.booking_id` | string |  | everyone | Offered booking, for get_booking. |
+| `dispatch_offer.status` | enum |  | everyone | pending: waiting for this driver; accepted/declined: answered; expired: the driver did not answer in time; cancelled: withdrawn because the booking went to someone else or stopped waiting for a driver. Values: `pending`, `accepted`, `declined`, `expired`, `cancelled`. |
+| `dispatch_offer.expires_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
+| `dispatch_offer.scheduled_time` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
+| `dispatch_offer.pickup` | object\|null |  | everyone | A pickup or drop-off place. Coordinates and raw GPS are never exposed here. |
+| `dispatch_offer.pickup.name` | string\|null |  | everyone | Short place name (e.g. business or airport name), or null. |
+| `dispatch_offer.pickup.address` | string\|null |  | everyone | Formatted street address, or null. |
+| `dispatch_offer.dropoff` | object\|null |  | everyone | A pickup or drop-off place. Coordinates and raw GPS are never exposed here. |
+| `dispatch_offer.dropoff.name` | string\|null |  | everyone | Short place name (e.g. business or airport name), or null. |
+| `dispatch_offer.dropoff.address` | string\|null |  | everyone | Formatted street address, or null. |
+| `dispatch_offer.pickup_distance_meters` | number\|null | meters | everyone | Driving distance from the driver to the pickup when offered. |
+| `dispatch_offer.pickup_duration_seconds` | number\|null | seconds | everyone | Driving time from the driver to the pickup when offered. |
+| `dispatch_offer.trip_distance_meters` | number\|null | meters | everyone | Pickup-to-drop-off route distance. |
+| `dispatch_offer.trip_duration_seconds` | number\|null | seconds | everyone | Pickup-to-drop-off route duration. |
+| `dispatch_offer.expected_payout` | number\|null | minor currency units | everyone | What the driver is expected to earn after fees and fleet share, in minor units; null when unknown. |
+| `dispatch_offer.currency` | string\|null |  | everyone | ISO 4217 currency code, lower- or upper-case as stored (e.g. "usd", "EUR"). |
+## Customer
+
+A rider who has booked with the fleet (or with a solo driver). Contact fields follow the web console's customer list.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `rider_id` | string |  | everyone | Rider id for get_customer, update_booking or quotes. |
+| `first_name` | string\|null |  | everyone | Rider first name, or null. |
+| `last_name` | string\|null |  | everyone | Rider last name, or null. |
+| `phone` | string\|null |  | owner, admin, self | Rider phone (E.164), or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
+| `email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
+| `first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
+| `last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
+## CustomerPage
+
+Customers, most recent booking first.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `items` | array |  | everyone | The page of results, newest first unless the tool says otherwise. |
+| `items[].rider_id` | string |  | everyone | Rider id for get_customer, update_booking or quotes. |
+| `items[].first_name` | string\|null |  | everyone | Rider first name, or null. |
+| `items[].last_name` | string\|null |  | everyone | Rider last name, or null. |
+| `items[].phone` | string\|null |  | owner, admin, self | Rider phone (E.164), or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
+| `items[].email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
+| `items[].first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
+| `items[].last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
+| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
+| `has_more` | boolean |  | everyone | True when another page exists. |
+## CustomerDetail
+
+One customer with their recent bookings.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `customer` | object |  | everyone | A rider who has booked with the fleet (or with a solo driver). Contact fields follow the web console's customer list. |
+| `customer.rider_id` | string |  | everyone | Rider id for get_customer, update_booking or quotes. |
+| `customer.first_name` | string\|null |  | everyone | Rider first name, or null. |
+| `customer.last_name` | string\|null |  | everyone | Rider last name, or null. |
+| `customer.phone` | string\|null |  | owner, admin, self | Rider phone (E.164), or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
+| `customer.email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
+| `customer.first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
+| `customer.last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
+| `recent_bookings` | array |  | everyone | Up to 20 of the rider's bookings with this fleet or driver, newest first. |
+| `recent_bookings[].booking_id` | string |  | everyone | Booking id for get_booking. |
+| `recent_bookings[].status` | enum |  | everyone | Booking status. Values: `pending`, `confirmed`, `in_progress`, `completed`, `canceled`, `pending_payment`. |
+| `recent_bookings[].scheduled_time` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
+## CustomerWrite
+
+Preview or result of create_customer / update_customer: the customer as the Customers page lists them (null in a preview of a customer Meter does not know yet).
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `customer` | object\|null |  | everyone | A rider who has booked with the fleet (or with a solo driver). Contact fields follow the web console's customer list. |
+| `customer.rider_id` | string |  | everyone | Rider id for get_customer, update_booking or quotes. |
+| `customer.first_name` | string\|null |  | everyone | Rider first name, or null. |
+| `customer.last_name` | string\|null |  | everyone | Rider last name, or null. |
+| `customer.phone` | string\|null |  | owner, admin, self | Rider phone (E.164), or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
+| `customer.email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
+| `customer.first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
+| `customer.last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
+## CustomerImport
+
+A customer import: what each row would do (preview) or did (applied).
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string\|null |  | everyone | Fleet the customers belong to, or null for a solo driver's own customers. |
+| `totals` | object |  | everyone | Row counts by status. |
+| `totals.rows` | number |  | everyone | Rows received. |
+| `totals.create` | number |  | everyone | New riders. |
+| `totals.add_existing` | number |  | everyone | Existing Meter riders added as customers. |
+| `totals.update_name` | number |  | everyone | Existing customers whose missing name is filled. |
+| `totals.unchanged` | number |  | everyone | Already customers with nothing to change. |
+| `totals.duplicate` | number |  | everyone | Rows repeating an earlier phone or email. |
+| `totals.invalid` | number |  | everyone | Rows skipped. |
+| `totals.failed` | number |  | everyone | Rows that could not be written (0 in a preview). |
+| `rows` | array |  | everyone | Every row with its status, in request order. |
+| `rows[].row` | number |  | everyone | 1-based position of the row in the request (CSV rows count from the first line after the header). |
+| `rows[].status` | enum |  | everyone | create: a new Meter rider is created and added; add_existing: a rider Meter already knows is added to your customers; update_name: an existing customer gets the missing first/last name; unchanged: already a customer, nothing to do; duplicate: same phone or email as an earlier row, skipped; invalid: skipped, see reason; failed: the row could not be written, see reason. Values: `create`, `add_existing`, `update_name`, `unchanged`, `duplicate`, `invalid`, `failed`. |
+| `rows[].reason` | string\|null |  | everyone | Why the row is invalid, a duplicate or failed; null otherwise. |
+| `rows[].rider_id` | string\|null |  | everyone | Customer id once known (existing riders in a preview, every written row after confirming); null otherwise. |
+| `rows[].first_name` | string\|null |  | everyone | First name from the row, or null. |
+| `rows[].last_name` | string\|null |  | everyone | Last name from the row, or null. |
+| `rows[].phone` | string\|null |  | owner, admin, self | Phone normalized to E.164, or null. |
+| `rows[].email` | string\|null |  | owner, admin, self | Email from the row (lower-case), or null. Used only to find a rider Meter already knows. |
+## CustomerImportWrite
+
+Preview or result of import_customers.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `import` | object |  | everyone | A customer import: what each row would do (preview) or did (applied). |
+| `import.fleet_id` | string\|null |  | everyone | Fleet the customers belong to, or null for a solo driver's own customers. |
+| `import.totals` | object |  | everyone | Row counts by status. |
+| `import.totals.rows` | number |  | everyone | Rows received. |
+| `import.totals.create` | number |  | everyone | New riders. |
+| `import.totals.add_existing` | number |  | everyone | Existing Meter riders added as customers. |
+| `import.totals.update_name` | number |  | everyone | Existing customers whose missing name is filled. |
+| `import.totals.unchanged` | number |  | everyone | Already customers with nothing to change. |
+| `import.totals.duplicate` | number |  | everyone | Rows repeating an earlier phone or email. |
+| `import.totals.invalid` | number |  | everyone | Rows skipped. |
+| `import.totals.failed` | number |  | everyone | Rows that could not be written (0 in a preview). |
+| `import.rows` | array |  | everyone | Every row with its status, in request order. |
+| `import.rows[].row` | number |  | everyone | 1-based position of the row in the request (CSV rows count from the first line after the header). |
+| `import.rows[].status` | enum |  | everyone | create: a new Meter rider is created and added; add_existing: a rider Meter already knows is added to your customers; update_name: an existing customer gets the missing first/last name; unchanged: already a customer, nothing to do; duplicate: same phone or email as an earlier row, skipped; invalid: skipped, see reason; failed: the row could not be written, see reason. Values: `create`, `add_existing`, `update_name`, `unchanged`, `duplicate`, `invalid`, `failed`. |
+| `import.rows[].reason` | string\|null |  | everyone | Why the row is invalid, a duplicate or failed; null otherwise. |
+| `import.rows[].rider_id` | string\|null |  | everyone | Customer id once known (existing riders in a preview, every written row after confirming); null otherwise. |
+| `import.rows[].first_name` | string\|null |  | everyone | First name from the row, or null. |
+| `import.rows[].last_name` | string\|null |  | everyone | Last name from the row, or null. |
+| `import.rows[].phone` | string\|null |  | owner, admin, self | Phone normalized to E.164, or null. |
+| `import.rows[].email` | string\|null |  | owner, admin, self | Email from the row (lower-case), or null. Used only to find a rider Meter already knows. |
+## OperatorBooking
+
+A booking an operator creates for a customer: preview, or the created booking.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `booking_id` | string\|null |  | everyone | Created booking id for get_booking; null in a preview. |
+| `status` | enum\|null |  | everyone | Booking status after creation; null in a preview. Values: `pending`, `confirmed`, `in_progress`, `completed`, `canceled`, `pending_payment`. |
+| `fleet_id` | string |  | everyone | Fleet taking the booking. |
+| `fleet_name` | string\|null |  | everyone | Fleet display name. |
+| `customer` | object |  | everyone | Who rides. |
+| `customer.rider_id` | string\|null |  | everyone | Customer id; null in a preview of a customer Meter does not know yet. |
+| `customer.first_name` | string\|null |  | everyone | First name, or null. |
+| `customer.last_name` | string\|null |  | everyone | Last name, or null. |
+| `customer.phone` | string\|null |  | owner, admin, self | Phone (E.164), or null. |
+| `customer.email` | string\|null |  | owner, admin, self | Email, or null. |
+| `customer.is_new` | boolean |  | everyone | True when confirming creates this customer (a new Meter rider or a rider new to your customers). |
+| `pickup` | object |  | everyone | Pickup. |
+| `pickup.name` | string\|null |  | everyone | Place name, or null. |
+| `pickup.address` | string\|null |  | everyone | Formatted address, or null. |
+| `dropoff` | object\|null |  | everyone | Drop-off, or null for a metered ride without one. |
+| `dropoff.name` | string\|null |  | everyone | Place name, or null. |
+| `dropoff.address` | string\|null |  | everyone | Formatted address, or null. |
+| `stops` | array |  | everyone | Intermediate stops in order. |
+| `stops[].name` | string\|null |  | everyone | Place name, or null. |
+| `stops[].address` | string\|null |  | everyone | Formatted address, or null. |
+| `pickup_time` | string\|null | ISO 8601 | everyone | Pickup time (ISO 8601 with offset), or null for as soon as possible. |
+| `timezone` | string\|null |  | everyone | IANA timezone of the pickup. |
+| `passengers` | number |  | everyone | Passenger count. |
+| `ride_option` | object |  | everyone | Ride option booked. |
+| `ride_option.ride_option_id` | string |  | everyone | Ride option id. |
+| `ride_option.name` | string |  | everyone | Ride option name. |
+| `ride_option.capacity` | number\|null |  | everyone | Maximum passengers, or null. |
+| `price` | object |  | everyone | Quoted fare the customer pays. |
+| `price.amount_minor` | number | minor currency units | everyone | Price the rider is quoted, in minor units. |
+| `price.currency` | string |  | everyone | ISO 4217 currency code, upper-case. |
+| `price.display` | string |  | everyone | Price formatted for the human in the request locale. |
+| `price.mode` | enum |  | everyone | fixed: the quoted price is the fare; estimate: the final fare can change (for example overtime); metered: charged by the meter, the amount is an estimate. Values: `fixed`, `estimate`, `metered`. |
+| `price.disclosure` | string\|null |  | everyone | Pricing disclosure to show the human before confirming, or null. |
+| `payment` | enum |  | everyone | after_trip: nothing is charged at booking; the customer pays the driver after the ride (cash, card in person or an invoice). For upfront payment through a Meter link use create_quote then send_quote instead. Values: `after_trip`. |
+| `cancellation_policy` | object |  | everyone | Cancellation policy that applies to the customer. |
+| `cancellation_policy.grace_period_seconds` | number | seconds | everyone | Free cancellation window after booking. |
+| `cancellation_policy.fee_minor` | number\|null | minor currency units | everyone | Fee for cancelling after the free window, in minor units; null when unknown or none. |
+| `cancellation_policy.currency` | string\|null |  | everyone | Currency of the fee, or null. |
+| `cancellation_policy.summary` | string |  | everyone | One-sentence policy summary for the human. |
+| `notes` | string\|null |  | everyone | Notes for the driver, or null. |
+| `flight_number` | string\|null |  | everyone | Flight number, or null. |
+| `driver_id` | string\|null |  | everyone | Driver requested for the booking, or null for the fleet's dispatch to pick one. |
+| `driver_assignment` | enum |  | everyone | none: no driver chosen. requested: a preview that assigns driver_id on confirm. assigned: the driver has the booking. failed: the booking exists but the assignment was refused; use assign_booking. Values: `none`, `requested`, `assigned`, `failed`. |
+| `customer_notifications` | array |  | everyone | How the customer is told about the booking (confirmation with a tracking link). Empty when Meter has no phone or email for them. |
 ## OperatorBookingWrite
 
 Preview or result of create_booking.
@@ -1021,24 +1282,3 @@ Result of update_my_availability: what changed and the weekly schedule after the
 | `availability.days[].shifts[].start_time` | string |  | everyone | Shift start as HH:MM (24-hour) in the schedule timezone. |
 | `availability.days[].shifts[].end_time` | string |  | everyone | Shift end as HH:MM (24-hour); must be after start_time. |
 | `availability.updated_at` | string\|null | ISO 8601 | everyone | When the schedule last changed, or null when never saved. |
-## OnboardingChecklist
-
-Result of get_onboarding_checklist: setup progress for a fleet with the tool or page that completes each step. Payment-provider ids are never included.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `fleet_id` | string |  | everyone | The fleet. |
-| `fleet_name` | string\|null |  | everyone | Fleet display name. |
-| `booking_page_status` | enum |  | everyone | public_listed: bookable and listed in the rider app; unlisted_slug: bookable by link only (billing inactive); hidden_unavailable: riders cannot book yet. Values: `public_listed`, `unlisted_slug`, `hidden_unavailable`. |
-| `booking_page_url` | string\|null |  | everyone | Public booking page to share with riders, or null until the fleet has a public link. |
-| `done_count` | number |  | everyone | Items done. |
-| `total_count` | number |  | everyone | Total items. |
-| `required_remaining` | array |  | everyone | Ids of required items still open, in recommended order. |
-| `items` | array |  | everyone | Checklist items in recommended order. |
-| `items[].key` | enum |  | everyone | Stable identifier of the setup step. Values: `fleet_profile`, `brand_icon`, `service_area`, `ride_option_with_fare`, `booking_settings`, `vehicle`, `driver`, `payouts_connected`, `booking_link`, `first_booking`. |
-| `items[].title` | string |  | everyone | Short human title of the step. |
-| `items[].done` | boolean |  | everyone | True when the step is complete. |
-| `items[].required` | boolean |  | everyone | True when riders cannot book until this step is done. |
-| `items[].how_to` | string |  | everyone | What to do next: the MCP tool that completes the step when one exists, otherwise the web page. |
-| `items[].tool` | string\|null |  | everyone | Name of the MCP tool that completes this step, or null when it needs the web console. |
-| `items[].url` | string\|null |  | everyone | Absolute web URL where a human completes the step, or null. |

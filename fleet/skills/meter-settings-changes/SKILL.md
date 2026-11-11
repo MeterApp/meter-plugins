@@ -1,6 +1,6 @@
 ---
 name: meter-settings-changes
-description: "Configure Meter driver and fleet settings, including service areas and boundaries, fares and pricing, booking and dispatch rules, website pages and custom domains, branding, privacy, fees, vehicles, members, profile and availability. Use the matching Meter tool with a saved preview and explicit confirmation. Use for a requested change. Do not use for read-only questions, full fleet onboarding, or rider bookings."
+description: "Configure Meter driver and fleet settings, including service areas and boundaries, fares and pricing, personal booking rules, notification preferences, dispatch, website pages and custom domains, branding, privacy, fees, vehicles, members, profile and availability. Use the matching Meter tool with a saved preview and explicit confirmation. Use for a requested change. Do not use for read-only questions, full fleet onboarding, or rider bookings."
 ---
 
 # Changing settings in Meter
@@ -47,7 +47,7 @@ Use the connected server's tool list and `describe_api` to find the exact operat
 | Setting | Tools |
 | --- | --- |
 | Fleet profile, branding and contact information | `get_fleet`, `update_fleet_settings` |
-| Service areas, pickup and drop-off boundaries | `list_service_zones`, `find_zone_boundary`, `save_service_zone` |
+| Service areas, pickup and drop-off boundaries | `list_service_zones`, `find_zone_boundary`, `save_service_zone`, `delete_service_zone` |
 | Fares, flat rates and ride options | `list_fares`, `get_fare`, `create_fare`, `update_fare`, `delete_fare`, `list_zone_fares`, `set_zone_fare`, `set_zone_fares`, and the ride option tools |
 | Booking rules, dispatch, cancellation and fees | `get_fleet`, `update_booking_settings`, `update_fee_settings`, `get_dynamic_pricing`, `update_dynamic_pricing` |
 | Website address and pages | `get_storefront_settings`, `update_storefront_settings` for the Meter address, `update_fleet_settings` for branding and contact details, and the website page tools |
@@ -55,13 +55,18 @@ Use the connected server's tool list and `describe_api` to find the exact operat
 | Google listing and reviews | `search_google_places`, `link_google_maps_place`, `unlink_google_maps_place` |
 | Privacy and voice agent | `get_privacy_settings`, `update_privacy_settings`, `get_voice_agent_settings`, `update_voice_agent_settings` |
 | Vehicle and member settings | `list_vehicles`, `list_fleet_members`, the vehicle and member tools, and `assign_vehicle` |
+| Personal bookings for solo drivers | `get_my_booking_settings` and `update_my_booking_settings` for fares, payments, cancellation, pickup notice, passenger capacity, booking hours and buffers |
+| Dated closures and booking pauses | `list_booking_blocks`, `save_booking_block`, `remove_booking_block` with the personal or fleet scope |
+| Solo driver website | `get_my_driver_site`, `update_my_driver_site` for the public address, biography, service area, color and phone visibility |
+| Personal notifications | `get_my_notification_preferences`, `update_my_notification_preference` for channels and quiet hours |
+| Fleet notification webhooks | `list_notification_webhooks`, `update_notification_webhook` for delivery and filters. Use the returned console link for new destinations and signing. |
 | Personal details and schedule | `whoami`, `update_my_profile`, `update_my_availability`. Availability replaces the whole week, so include every intended working day. |
 
 Use the signed-in person's role and scope. Fleet-wide settings normally require a fleet owner or admin. For a domain, show the exact hostname and which fleet it will serve. After connecting, relay the returned DNS records and ask the person to enter them at their provider. Report the site as live only when the tool returns `active`. For a domain purchase or renewal, open the returned Website settings link for the person to complete in Meter.
 
 If `whoami.connection.access` is `read`, show the person [Connected apps](https://www.meterapp.co/app/account/connected-apps) and ask them to switch this connection to **Look and change**. Refresh the tool list or start a new session after they grant access. If the connection is writable and the tool is missing, say which operation is unavailable in this connection. Use a relevant Meter page for actions the person must finish themselves, such as account authorization, billing and bank setup. Never report a change without an applied result.
 
-Run the preview and approval separately for each target. Use only IDs returned by Meter. When `find_zone_boundary` returns multiple possible boundaries, confirm the intended area before saving it.
+For booking page hours use personal booking settings or fleet booking settings. For a specific closure or an indefinite pause use a booking block. Run the preview and approval separately for each target. Use only IDs returned by Meter. When `find_zone_boundary` returns multiple possible boundaries, confirm the intended area before saving it.
 
 ## From a terminal
 

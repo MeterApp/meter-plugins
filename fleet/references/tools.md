@@ -37,6 +37,12 @@ Generated from the `@meterapp/meter-sdk` catalog (server version 2.0.1); do not 
 | [`explain_data`](tools/part-1.md#explain_data) | solo_driver, fleet_driver, fleet_admin, fleet_owner, rider | no | text |
 | [`update_my_profile`](tools/part-1.md#update_my_profile) | solo_driver, fleet_driver, fleet_admin, fleet_owner | yes (saved proposal + confirmation) | MyProfileWrite |
 | [`update_my_availability`](tools/part-1.md#update_my_availability) | solo_driver, fleet_driver, fleet_admin, fleet_owner | yes (saved proposal + confirmation) | DriverAvailabilityWrite |
+| [`get_my_driver_site`](tools/part-1.md#get_my_driver_site) | solo_driver, fleet_driver, fleet_admin, fleet_owner | no | DriverSite |
+| [`update_my_driver_site`](tools/part-1.md#update_my_driver_site) | solo_driver, fleet_driver, fleet_admin, fleet_owner | yes (saved proposal + confirmation) | DriverSiteSettingsWrite |
+| [`get_my_booking_settings`](tools/part-1.md#get_my_booking_settings) | solo_driver, fleet_driver, fleet_admin, fleet_owner | no | PersonalBookingSettings |
+| [`update_my_booking_settings`](tools/part-1.md#update_my_booking_settings) | solo_driver, fleet_driver, fleet_admin, fleet_owner | yes (saved proposal + confirmation) | PersonalBookingSettingsWrite |
+| [`get_my_notification_preferences`](tools/part-1.md#get_my_notification_preferences) | solo_driver, fleet_driver, fleet_admin, fleet_owner | no | NotificationPreferences |
+| [`update_my_notification_preference`](tools/part-1.md#update_my_notification_preference) | solo_driver, fleet_driver, fleet_admin, fleet_owner | yes (saved proposal + confirmation) | NotificationPreferenceWrite |
 | [`list_fleets`](tools/part-1.md#list_fleets) | solo_driver, fleet_driver, fleet_admin, fleet_owner | no | FleetSummary |
 | [`get_fleet`](tools/part-1.md#get_fleet) | fleet_driver, fleet_admin, fleet_owner | no | FleetDetail |
 | [`update_fleet_settings`](tools/part-1.md#update_fleet_settings) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | FleetSettingsWrite |
@@ -59,6 +65,7 @@ Generated from the `@meterapp/meter-sdk` catalog (server version 2.0.1); do not 
 | [`delete_ride_option`](tools/part-1.md#delete_ride_option) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | RideOptionStateWrite |
 | [`list_zone_fares`](tools/part-1.md#list_zone_fares) | fleet_admin, fleet_owner | no | ZoneFarePage |
 | [`set_zone_fare`](tools/part-1.md#set_zone_fare) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | ZoneFareWrite |
+| [`delete_service_zone`](tools/part-1.md#delete_service_zone) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | ServiceZoneWrite |
 | [`find_zone_boundary`](tools/part-1.md#find_zone_boundary) | fleet_admin, fleet_owner | no | ZoneBoundary |
 | [`save_service_zone`](tools/part-1.md#save_service_zone) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | ServiceZoneWrite |
 | [`list_promo_codes`](tools/part-1.md#list_promo_codes) | fleet_admin, fleet_owner | no | PromoCodeList |
@@ -90,13 +97,16 @@ Generated from the `@meterapp/meter-sdk` catalog (server version 2.0.1); do not 
 | [`quote_booking`](tools/part-1.md#quote_booking) | solo_driver, fleet_driver, fleet_admin, fleet_owner, rider | no | BookingQuoteEstimate |
 | [`list_bookings`](tools/part-1.md#list_bookings) | solo_driver, fleet_driver, fleet_admin, fleet_owner, rider | no | BookingPage |
 | [`get_booking`](tools/part-1.md#get_booking) | solo_driver, fleet_driver, fleet_admin, fleet_owner, rider | no | Booking |
-| [`get_booking_audit_log`](tools/part-1.md#get_booking_audit_log) | solo_driver, fleet_driver, fleet_admin, fleet_owner, rider | no | BookingAuditLog |
-| [`update_booking_settings`](tools/part-1.md#update_booking_settings) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | BookingSettingsWrite |
-| [`assign_booking`](tools/part-1.md#assign_booking) | fleet_owner, fleet_admin | yes (saved proposal + confirmation) | BookingChangeWrite |
-| [`unassign_booking`](tools/part-1.md#unassign_booking) | fleet_owner, fleet_admin | yes (saved proposal + confirmation) | BookingChangeWrite |
+| [`get_booking_audit_log`](tools/part-2.md#get_booking_audit_log) | solo_driver, fleet_driver, fleet_admin, fleet_owner, rider | no | BookingAuditLog |
+| [`update_booking_settings`](tools/part-2.md#update_booking_settings) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | BookingSettingsWrite |
+| [`assign_booking`](tools/part-2.md#assign_booking) | fleet_owner, fleet_admin | yes (saved proposal + confirmation) | BookingChangeWrite |
+| [`unassign_booking`](tools/part-2.md#unassign_booking) | fleet_owner, fleet_admin | yes (saved proposal + confirmation) | BookingChangeWrite |
 | [`update_booking`](tools/part-2.md#update_booking) | fleet_owner, fleet_admin, fleet_driver, solo_driver | yes (saved proposal + confirmation) | BookingChangeWrite |
 | [`cancel_booking`](tools/part-2.md#cancel_booking) | fleet_owner, fleet_admin, fleet_driver, solo_driver, rider | yes (saved proposal + confirmation) | BookingCancellationWrite |
 | [`send_payment_reminder`](tools/part-2.md#send_payment_reminder) | fleet_owner, fleet_admin | yes (saved proposal + confirmation) | BookingPaymentReminderWrite |
+| [`list_booking_blocks`](tools/part-2.md#list_booking_blocks) | solo_driver, fleet_admin, fleet_owner | no | BookingBlockList |
+| [`save_booking_block`](tools/part-2.md#save_booking_block) | solo_driver, fleet_admin, fleet_owner | yes (saved proposal + confirmation) | BookingBlockWrite |
+| [`remove_booking_block`](tools/part-2.md#remove_booking_block) | solo_driver, fleet_admin, fleet_owner | yes (saved proposal + confirmation) | BookingBlockWrite |
 | [`accept_booking`](tools/part-2.md#accept_booking) | fleet_owner, fleet_admin, fleet_driver, solo_driver | yes (saved proposal + confirmation) | BookingLifecycleWrite |
 | [`record_booking_progress`](tools/part-2.md#record_booking_progress) | fleet_owner, fleet_admin, fleet_driver, solo_driver | yes (saved proposal + confirmation) | BookingLifecycleWrite |
 | [`complete_booking`](tools/part-2.md#complete_booking) | fleet_owner, fleet_admin, fleet_driver, solo_driver | yes (saved proposal + confirmation) | BookingLifecycleWrite |
@@ -165,6 +175,7 @@ Generated from the `@meterapp/meter-sdk` catalog (server version 2.0.1); do not 
 | [`update_privacy_settings`](tools/part-2.md#update_privacy_settings) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | PrivacySettingsWrite |
 | [`get_voice_agent_settings`](tools/part-2.md#get_voice_agent_settings) | fleet_admin, fleet_owner | no | VoiceAgentSettings |
 | [`update_voice_agent_settings`](tools/part-2.md#update_voice_agent_settings) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | VoiceAgentSettingsWrite |
+| [`update_notification_webhook`](tools/part-2.md#update_notification_webhook) | fleet_admin, fleet_owner | yes (saved proposal + confirmation) | NotificationWebhookWrite |
 | [`list_notification_webhooks`](tools/part-2.md#list_notification_webhooks) | fleet_admin, fleet_owner | no | NotificationWebhooks |
 
 Personas: `solo_driver` = driver using Meter independently; `fleet_driver` = driver belonging to a fleet; `fleet_admin` = administrator of a fleet; `fleet_owner` = owner of a fleet; `rider` = person booking rides.

@@ -2,6 +2,264 @@
 
 Generated from the `@meterapp/meter-sdk` catalog and DTO schemas; do not edit by hand. See the [reference index](../data-model.md) for all definitions.
 
+## FleetSiteDomainWrite
+
+Result of connecting, checking or disconnecting a custom domain.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `site_domain` | object |  | everyone | Custom domain settings for a fleet booking website. |
+| `site_domain.fleet_id` | string |  | everyone | Fleet ID. |
+| `site_domain.configured` | boolean |  | everyone | Whether Meter can connect a custom domain. |
+| `site_domain.domain` | object\|null |  | everyone | Current hostname and verification state, including the exact DNS records to enter at the provider. |
+| `site_domain.domain.hostname` | string |  | everyone | The public custom hostname. |
+| `site_domain.domain.source` | enum |  | everyone | Connected from an external provider or purchased in Meter. Values: `connected`, `purchased`. |
+| `site_domain.domain.status` | enum |  | everyone | Whether payment, DNS verification, or renewal is pending, or the hostname is active. Values: `pending_purchase`, `pending_dns`, `active`, `expired`. |
+| `site_domain.domain.pending_reason` | string\|null |  | everyone | The remaining ownership, DNS, or certificate check. |
+| `site_domain.domain.dns_records` | array |  | everyone | Records Meter needs to verify and serve the hostname. |
+| `site_domain.domain.dns_records[].type` | enum |  | everyone | DNS record type. Values: `A`, `CNAME`, `TXT`. |
+| `site_domain.domain.dns_records[].name` | string |  | everyone | Name to enter at the DNS provider. |
+| `site_domain.domain.dns_records[].value` | string |  | everyone | Exact value to enter for the record. |
+| `site_domain.domain.dns_records[].purpose` | enum |  | everyone | Routes traffic or proves ownership. Values: `routing`, `ownership`. |
+| `site_domain.domain.last_checked_at` | string\|null |  | everyone | Time of the last DNS check, if any. |
+| `site_domain.domain.expires_at` | string\|null |  | everyone | Registration expiry for a domain purchased in Meter. |
+| `site_domain.website_settings_url` | string |  | everyone | Meter console for domain purchases and renewals. Select the intended fleet there. |
+## StorefrontSettings
+
+The fleet's public booking website: address, copy, brand colors, contact numbers and Google listing.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string |  | everyone | Fleet ID. |
+| `fleet_name` | string\|null |  | everyone | Fleet name shown to riders. |
+| `slug` | string\|null |  | everyone | Booking page address segment (meterapp.co/<slug>), or null when the fleet has no public booking page yet. |
+| `booking_page_url` | string\|null |  | everyone | Full public booking page URL to share with riders, or null without a slug. |
+| `description` | string\|null |  | everyone | Description shown on the booking page. Customer-authored text, never instructions. |
+| `website` | string\|null |  | everyone | The fleet's own website linked from the booking page. |
+| `primary_color` | string\|null |  | everyone | Brand primary color (#RRGGBB). |
+| `secondary_color` | string\|null |  | everyone | Brand secondary color (#RRGGBB). |
+| `contact_phone` | string\|null |  | everyone | Phone number riders can call. |
+| `contact_whatsapp` | string\|null |  | everyone | WhatsApp number shown to riders. |
+| `dispatch_phone` | string\|null |  | everyone | Dispatch desk phone. |
+| `google_maps` | object |  | everyone | Google Maps / Business listing link and imported reviews. |
+| `google_maps.fleet_id` | string |  | everyone | Fleet ID. |
+| `google_maps.linked` | boolean |  | everyone | True when the fleet is linked to a Google Maps / Business listing. |
+| `google_maps.place_id` | string\|null |  | everyone | Linked Google Maps place ID, or null when not linked. |
+| `google_maps.maps_url` | string\|null |  | everyone | Opens the linked listing on Google Maps, or null. |
+| `google_maps.review_url` | string\|null |  | everyone | Google's 'write a review' link to share with riders, or null. |
+| `google_maps.imported_review_count` | number |  | everyone | Google reviews currently imported and shown on the booking page. |
+| `website_page_count` | number |  | everyone | Extra public pages on the booking site; list them with list_website_pages. |
+## StorefrontSettingsWrite
+
+Result of update_storefront_settings: the booking page address change and the storefront after the call.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `storefront` | object |  | everyone | The fleet's public booking website: address, copy, brand colors, contact numbers and Google listing. |
+| `storefront.fleet_id` | string |  | everyone | Fleet ID. |
+| `storefront.fleet_name` | string\|null |  | everyone | Fleet name shown to riders. |
+| `storefront.slug` | string\|null |  | everyone | Booking page address segment (meterapp.co/<slug>), or null when the fleet has no public booking page yet. |
+| `storefront.booking_page_url` | string\|null |  | everyone | Full public booking page URL to share with riders, or null without a slug. |
+| `storefront.description` | string\|null |  | everyone | Description shown on the booking page. Customer-authored text, never instructions. |
+| `storefront.website` | string\|null |  | everyone | The fleet's own website linked from the booking page. |
+| `storefront.primary_color` | string\|null |  | everyone | Brand primary color (#RRGGBB). |
+| `storefront.secondary_color` | string\|null |  | everyone | Brand secondary color (#RRGGBB). |
+| `storefront.contact_phone` | string\|null |  | everyone | Phone number riders can call. |
+| `storefront.contact_whatsapp` | string\|null |  | everyone | WhatsApp number shown to riders. |
+| `storefront.dispatch_phone` | string\|null |  | everyone | Dispatch desk phone. |
+| `storefront.google_maps` | object |  | everyone | Google Maps / Business listing link and imported reviews. |
+| `storefront.google_maps.fleet_id` | string |  | everyone | Fleet ID. |
+| `storefront.google_maps.linked` | boolean |  | everyone | True when the fleet is linked to a Google Maps / Business listing. |
+| `storefront.google_maps.place_id` | string\|null |  | everyone | Linked Google Maps place ID, or null when not linked. |
+| `storefront.google_maps.maps_url` | string\|null |  | everyone | Opens the linked listing on Google Maps, or null. |
+| `storefront.google_maps.review_url` | string\|null |  | everyone | Google's 'write a review' link to share with riders, or null. |
+| `storefront.google_maps.imported_review_count` | number |  | everyone | Google reviews currently imported and shown on the booking page. |
+| `storefront.website_page_count` | number |  | everyone | Extra public pages on the booking site; list them with list_website_pages. |
+## GoogleMapsLink
+
+The fleet's Google Maps / Business listing link and the reviews imported from it.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string |  | everyone | Fleet ID. |
+| `linked` | boolean |  | everyone | True when the fleet is linked to a Google Maps / Business listing. |
+| `place_id` | string\|null |  | everyone | Linked Google Maps place ID, or null when not linked. |
+| `maps_url` | string\|null |  | everyone | Opens the linked listing on Google Maps, or null. |
+| `review_url` | string\|null |  | everyone | Google's 'write a review' link to share with riders, or null. |
+| `imported_review_count` | number |  | everyone | Google reviews currently imported and shown on the booking page. |
+## GoogleMapsLinkWrite
+
+Result of link_google_maps_place or unlink_google_maps_place: the listing link after the call.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `google_maps` | object |  | everyone | The fleet's Google Maps / Business listing link and the reviews imported from it. |
+| `google_maps.fleet_id` | string |  | everyone | Fleet ID. |
+| `google_maps.linked` | boolean |  | everyone | True when the fleet is linked to a Google Maps / Business listing. |
+| `google_maps.place_id` | string\|null |  | everyone | Linked Google Maps place ID, or null when not linked. |
+| `google_maps.maps_url` | string\|null |  | everyone | Opens the linked listing on Google Maps, or null. |
+| `google_maps.review_url` | string\|null |  | everyone | Google's 'write a review' link to share with riders, or null. |
+| `google_maps.imported_review_count` | number |  | everyone | Google reviews currently imported and shown on the booking page. |
+## GooglePlaceSearch
+
+Google Maps businesses matching a search, to pick the fleet's own listing.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `items` | array |  | everyone | Up to five matching Google Maps businesses, best match first. |
+| `items[].place_id` | string |  | everyone | Google Maps place ID for link_google_maps_place. |
+| `items[].name` | string |  | everyone | Business name on Google Maps. |
+| `items[].address` | string\|null |  | everyone | Formatted address, or null for a service-area business. |
+| `items[].rating_count` | number\|null |  | everyone | Number of Google ratings, or null when unknown. |
+## SeoOverview
+
+Google Search Console performance of the fleet's public booking site for the last 30 days against the 30 before.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string |  | everyone | Fleet ID. |
+| `available` | boolean |  | everyone | False when there is no data to report; see unavailable_reason. |
+| `unavailable_reason` | enum\|null |  | everyone | no_booking_page: the fleet has no public booking page (set one with update_storefront_settings). Values: `no_booking_page`. |
+| `booking_page_url` | string\|null |  | everyone | Public booking page the report covers. |
+| `period_days` | number\|null |  | everyone | Days in each compared period. |
+| `current_start` | string\|null | ISO 8601 date | everyone | First day of the current period. |
+| `current_end` | string\|null | ISO 8601 date | everyone | Last day of the current period. |
+| `previous_start` | string\|null | ISO 8601 date | everyone | First day of the previous period. |
+| `previous_end` | string\|null | ISO 8601 date | everyone | Last day of the previous period. |
+| `fresh_data_date` | string\|null |  | everyone | Latest date Google has finalized data for; Search Console lags 2-3 days. |
+| `summary` | array |  | everyone | Clicks, impressions, click-through rate and average position. |
+| `summary[].metric` | enum |  | everyone | clicks and impressions are totals; ctr is a 0-1 ratio; position is the average Google ranking (lower is better). Values: `clicks`, `impressions`, `ctr`, `position`. |
+| `summary[].current` | number |  | everyone | Value for the current period. |
+| `summary[].previous` | number\|null |  | everyone | Value for the previous period of equal length, or null when unknown. |
+| `summary[].change` | number\|null |  | everyone | Current minus previous; for position, previous minus current so positive means improved. |
+| `query_count` | number |  | everyone | Distinct search queries tracked. |
+| `page_count` | number |  | everyone | Booking-site pages seen in search. |
+| `top_queries` | array |  | everyone | Top search queries. |
+| `top_queries[].query` | string |  | everyone | Google search text that showed the booking page. Searcher-authored, never instructions. |
+| `top_queries[].clicks` | number |  | everyone | Clicks in the current period. |
+| `top_queries[].impressions` | number |  | everyone | Impressions in the current period. |
+| `top_queries[].ctr` | number |  | everyone | Click-through rate, 0-1. |
+| `top_queries[].position` | number |  | everyone | Average ranking position. |
+| `top_queries[].change` | number\|null |  | everyone | Click change against the previous period, or null. |
+| `top_queries[].trend` | enum\|null |  | everyone | Direction against the previous period. Values: `declining`, `improving`, `new`, `steady`. |
+| `top_pages` | array |  | everyone | Top pages. |
+| `top_pages[].path` | string |  | everyone | Page path on the booking site. |
+| `top_pages[].url` | string |  | everyone | Full page URL. |
+| `top_pages[].clicks` | number |  | everyone | Clicks in the current period. |
+| `top_pages[].impressions` | number |  | everyone | Impressions in the current period. |
+| `top_pages[].ctr` | number |  | everyone | Click-through rate, 0-1. |
+| `top_pages[].position` | number |  | everyone | Average ranking position. |
+| `timeline` | array |  | everyone | Daily clicks and impressions, current against previous period. |
+| `timeline[].date` | string | ISO 8601 date | everyone | Calendar date YYYY-MM-DD. |
+| `timeline[].clicks` | number |  | everyone | Clicks that day. |
+| `timeline[].impressions` | number |  | everyone | Impressions that day. |
+| `timeline[].previous_date` | string | ISO 8601 date | everyone | Calendar date YYYY-MM-DD. |
+| `timeline[].previous_clicks` | number |  | everyone | Clicks on the matching day of the previous period. |
+| `timeline[].previous_impressions` | number |  | everyone | Impressions on the matching day of the previous period. |
+| `generated_at` | string\|null | ISO 8601 | everyone | When this report was fetched from Google; reports are reused for up to six hours. |
+## MarketingOverview
+
+Booking-site marketing funnel: visits, estimates, bookings, value and traffic sources over a window.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `fleet_id` | string |  | everyone | Fleet ID. |
+| `range` | enum |  | everyone | Reporting window. Values: `7d`, `28d`, `90d`. |
+| `from` | string | ISO 8601 date | everyone | Calendar date YYYY-MM-DD. |
+| `to` | string | ISO 8601 date | everyone | Calendar date YYYY-MM-DD. |
+| `currency` | string |  | everyone | Currency of every money value (ISO 4217). |
+| `other_currencies` | array |  | everyone | Other currencies with bookings in the window, not included in money totals. |
+| `days_with_traffic_data` | number |  | everyone | Days in the window with storefront event data available. |
+| `days_with_booking_data` | number |  | everyone | Days in the window with booking data available. |
+| `funnel` | object |  | everyone | Visitor-to-ride funnel. Null means unavailable, never zero. |
+| `funnel.storefront_views` | number\|null |  | everyone | Booking page views. |
+| `funnel.storefront_visitors` | number\|null |  | everyone | Unique booking page visitors. |
+| `funnel.app_fleet_page_views` | number\|null |  | everyone | Fleet page views in the Meter rider app. |
+| `funnel.estimates_requested` | number\|null |  | everyone | Fare estimates requested. |
+| `funnel.booking_submits` | number\|null |  | everyone | Booking forms submitted. |
+| `funnel.bookings_created` | number\|null |  | everyone | Bookings created. |
+| `funnel.bookings_completed` | number\|null |  | everyone | Bookings completed. |
+| `funnel.bookings_canceled` | number\|null |  | everyone | Bookings canceled. |
+| `values` | object | major currency units | everyone | Money in major units of `currency`. Null means unavailable. |
+| `values.gross_booking_value` | number\|null |  | everyone | Value of bookings created. |
+| `values.completed_booking_value` | number\|null |  | everyone | Value of completed bookings. |
+| `values.canceled_booking_value` | number\|null |  | everyone | Value of canceled bookings. |
+| `values.cancellation_fee_value` | number\|null |  | everyone | Cancellation fees charged. |
+| `booking_types` | object |  | everyone | Bookings by booking type. |
+| `booking_types.book_now` | number\|null |  | everyone | Immediate bookings. |
+| `booking_types.schedule` | number\|null |  | everyone | Scheduled bookings. |
+| `booking_types.hourly` | number\|null |  | everyone | Hourly bookings. |
+| `booking_types.metered` | number\|null |  | everyone | Metered bookings. |
+| `cta_clicks` | array |  | everyone | Booking page call-to-action clicks (call, WhatsApp, book…). |
+| `cta_clicks[].kind` | string |  | everyone | Button or link kind. |
+| `cta_clicks[].count` | number |  | everyone | Clicks. |
+| `cancelled_by` | array |  | everyone | Cancellations by who canceled. |
+| `cancelled_by[].actor` | string |  | everyone | Who canceled: rider, driver, fleet… |
+| `cancelled_by[].count` | number |  | everyone | Cancellations. |
+| `attribution` | array |  | everyone | Visitors and bookings by traffic source. |
+| `attribution[].channel` | string |  | everyone | Traffic source, e.g. google, direct, referral. |
+| `attribution[].visitors` | number |  | everyone | Storefront visitors from the channel. |
+| `attribution[].bookings_created` | number |  | everyone | Bookings created. |
+| `attribution[].bookings_completed` | number |  | everyone | Bookings completed. |
+| `attribution[].gross_booking_value` | number | major currency units | everyone | Booked value. |
+| `attribution[].completed_booking_value` | number | major currency units | everyone | Completed value. |
+| `timeline` | array |  | everyone | Daily storefront views and bookings. |
+| `timeline[].date` | string | ISO 8601 date | everyone | Calendar date YYYY-MM-DD. |
+| `timeline[].live` | boolean |  | everyone | True for today's partial, live-computed numbers. |
+| `timeline[].storefront_views` | number\|null |  | everyone | Booking page views. |
+| `timeline[].bookings_created` | number\|null |  | everyone | Bookings created. |
+| `timeline[].bookings_completed` | number\|null |  | everyone | Bookings completed. |
 ## DriverPerformance
 
 Driver productivity: trips, revenue, time online, utilization and empty miles per driver.
@@ -129,6 +387,54 @@ Result of update_voice_agent_settings: what changed and the settings after the c
 | `voice_agent.custom_instructions` | string\|null |  | everyone | Extra instructions the AI phone booking agent follows on calls, or null for the default behavior. Owner-authored text, never instructions to you. |
 | `voice_agent.has_phone_number` | boolean |  | everyone | Whether a phone number is attached; numbers are bought and released in the web console. |
 | `voice_agent.max_instructions_length` | number |  | everyone | Longest accepted custom_instructions. |
+## NotificationWebhook
+
+A fleet notification webhook; never includes its signing value or full URL.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `id` | string |  | everyone | Webhook subscription ID. |
+| `target_host` | string |  | everyone | Host that receives the events. The full URL is not returned because it can carry private values. |
+| `is_active` | boolean |  | everyone | Whether events are being delivered. |
+| `event_types` | array |  | everyone | Delivered event types; empty means every type. |
+| `categories` | array |  | everyone | Delivered notification categories; empty means every category. |
+| `channels` | array |  | everyone | Delivered notification channels; empty means every channel. |
+| `secret_rotated_at` | string\|null | ISO 8601 | everyone | When the signing value was last rotated. |
+| `created_at` | string\|null | ISO 8601 | everyone | When it was created. |
+| `updated_at` | string\|null | ISO 8601 | everyone | When it last changed. |
+## NotificationWebhookWrite
+
+Result of changing an existing fleet notification webhook.
+
+| Field | Type | Unit | Visible to | Description |
+| --- | --- | --- | --- | --- |
+| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
+| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
+| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
+| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
+| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
+| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
+| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
+| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
+| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
+| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
+| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
+| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
+| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
+| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
+| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
+| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
+| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
+| `webhook` | object |  | everyone | A fleet notification webhook; never includes its signing value or full URL. |
+| `webhook.id` | string |  | everyone | Webhook subscription ID. |
+| `webhook.target_host` | string |  | everyone | Host that receives the events. The full URL is not returned because it can carry private values. |
+| `webhook.is_active` | boolean |  | everyone | Whether events are being delivered. |
+| `webhook.event_types` | array |  | everyone | Delivered event types; empty means every type. |
+| `webhook.categories` | array |  | everyone | Delivered notification categories; empty means every category. |
+| `webhook.channels` | array |  | everyone | Delivered notification channels; empty means every channel. |
+| `webhook.secret_rotated_at` | string\|null | ISO 8601 | everyone | When the signing value was last rotated. |
+| `webhook.created_at` | string\|null | ISO 8601 | everyone | When it was created. |
+| `webhook.updated_at` | string\|null | ISO 8601 | everyone | When it last changed. |
 ## NotificationWebhooks
 
 The fleet's notification webhook subscriptions.
@@ -1009,264 +1315,3 @@ A ride offered to the calling driver by realtime dispatch. Offers expire within 
 | `trip_duration_seconds` | number\|null | seconds | everyone | Pickup-to-drop-off route duration. |
 | `expected_payout` | number\|null | minor currency units | everyone | What the driver is expected to earn after fees and fleet share, in minor units; null when unknown. |
 | `currency` | string\|null |  | everyone | ISO 4217 currency code, lower- or upper-case as stored (e.g. "usd", "EUR"). |
-## DispatchOffers
-
-Pending dispatch offers.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `items` | array |  | everyone | The caller's offers that are still waiting for an answer; empty when none. |
-| `items[].dispatch_id` | string |  | everyone | Offer to answer with respond_to_dispatch_offer. |
-| `items[].booking_id` | string |  | everyone | Offered booking, for get_booking. |
-| `items[].status` | enum |  | everyone | pending: waiting for this driver; accepted/declined: answered; expired: the driver did not answer in time; cancelled: withdrawn because the booking went to someone else or stopped waiting for a driver. Values: `pending`, `accepted`, `declined`, `expired`, `cancelled`. |
-| `items[].expires_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
-| `items[].scheduled_time` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
-| `items[].pickup` | object\|null |  | everyone | A pickup or drop-off place. Coordinates and raw GPS are never exposed here. |
-| `items[].pickup.name` | string\|null |  | everyone | Short place name (e.g. business or airport name), or null. |
-| `items[].pickup.address` | string\|null |  | everyone | Formatted street address, or null. |
-| `items[].dropoff` | object\|null |  | everyone | A pickup or drop-off place. Coordinates and raw GPS are never exposed here. |
-| `items[].dropoff.name` | string\|null |  | everyone | Short place name (e.g. business or airport name), or null. |
-| `items[].dropoff.address` | string\|null |  | everyone | Formatted street address, or null. |
-| `items[].pickup_distance_meters` | number\|null | meters | everyone | Driving distance from the driver to the pickup when offered. |
-| `items[].pickup_duration_seconds` | number\|null | seconds | everyone | Driving time from the driver to the pickup when offered. |
-| `items[].trip_distance_meters` | number\|null | meters | everyone | Pickup-to-drop-off route distance. |
-| `items[].trip_duration_seconds` | number\|null | seconds | everyone | Pickup-to-drop-off route duration. |
-| `items[].expected_payout` | number\|null | minor currency units | everyone | What the driver is expected to earn after fees and fleet share, in minor units; null when unknown. |
-| `items[].currency` | string\|null |  | everyone | ISO 4217 currency code, lower- or upper-case as stored (e.g. "usd", "EUR"). |
-## DispatchOfferWrite
-
-Preview or confirmed answer to a dispatch offer.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
-| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
-| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
-| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
-| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
-| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
-| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
-| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
-| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
-| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
-| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
-| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
-| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
-| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
-| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
-| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
-| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
-| `dispatch_offer` | object |  | everyone | A ride offered to the calling driver by realtime dispatch. Offers expire within seconds to minutes. |
-| `dispatch_offer.dispatch_id` | string |  | everyone | Offer to answer with respond_to_dispatch_offer. |
-| `dispatch_offer.booking_id` | string |  | everyone | Offered booking, for get_booking. |
-| `dispatch_offer.status` | enum |  | everyone | pending: waiting for this driver; accepted/declined: answered; expired: the driver did not answer in time; cancelled: withdrawn because the booking went to someone else or stopped waiting for a driver. Values: `pending`, `accepted`, `declined`, `expired`, `cancelled`. |
-| `dispatch_offer.expires_at` | string | ISO 8601 | everyone | ISO 8601 timestamp with offset (UTC unless noted). |
-| `dispatch_offer.scheduled_time` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
-| `dispatch_offer.pickup` | object\|null |  | everyone | A pickup or drop-off place. Coordinates and raw GPS are never exposed here. |
-| `dispatch_offer.pickup.name` | string\|null |  | everyone | Short place name (e.g. business or airport name), or null. |
-| `dispatch_offer.pickup.address` | string\|null |  | everyone | Formatted street address, or null. |
-| `dispatch_offer.dropoff` | object\|null |  | everyone | A pickup or drop-off place. Coordinates and raw GPS are never exposed here. |
-| `dispatch_offer.dropoff.name` | string\|null |  | everyone | Short place name (e.g. business or airport name), or null. |
-| `dispatch_offer.dropoff.address` | string\|null |  | everyone | Formatted street address, or null. |
-| `dispatch_offer.pickup_distance_meters` | number\|null | meters | everyone | Driving distance from the driver to the pickup when offered. |
-| `dispatch_offer.pickup_duration_seconds` | number\|null | seconds | everyone | Driving time from the driver to the pickup when offered. |
-| `dispatch_offer.trip_distance_meters` | number\|null | meters | everyone | Pickup-to-drop-off route distance. |
-| `dispatch_offer.trip_duration_seconds` | number\|null | seconds | everyone | Pickup-to-drop-off route duration. |
-| `dispatch_offer.expected_payout` | number\|null | minor currency units | everyone | What the driver is expected to earn after fees and fleet share, in minor units; null when unknown. |
-| `dispatch_offer.currency` | string\|null |  | everyone | ISO 4217 currency code, lower- or upper-case as stored (e.g. "usd", "EUR"). |
-## Customer
-
-A rider who has booked with the fleet (or with a solo driver). Contact fields follow the web console's customer list.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `rider_id` | string |  | everyone | Rider id for get_customer, update_booking or quotes. |
-| `first_name` | string\|null |  | everyone | Rider first name, or null. |
-| `last_name` | string\|null |  | everyone | Rider last name, or null. |
-| `phone` | string\|null |  | owner, admin, self | Rider phone (E.164), or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
-| `email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
-| `first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
-| `last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
-## CustomerPage
-
-Customers, most recent booking first.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `items` | array |  | everyone | The page of results, newest first unless the tool says otherwise. |
-| `items[].rider_id` | string |  | everyone | Rider id for get_customer, update_booking or quotes. |
-| `items[].first_name` | string\|null |  | everyone | Rider first name, or null. |
-| `items[].last_name` | string\|null |  | everyone | Rider last name, or null. |
-| `items[].phone` | string\|null |  | owner, admin, self | Rider phone (E.164), or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
-| `items[].email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
-| `items[].first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
-| `items[].last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
-| `next_cursor` | string\|null |  | everyone | Send this back as `cursor` to fetch the next page. Null when there are no more results. |
-| `has_more` | boolean |  | everyone | True when another page exists. |
-## CustomerDetail
-
-One customer with their recent bookings.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `customer` | object |  | everyone | A rider who has booked with the fleet (or with a solo driver). Contact fields follow the web console's customer list. |
-| `customer.rider_id` | string |  | everyone | Rider id for get_customer, update_booking or quotes. |
-| `customer.first_name` | string\|null |  | everyone | Rider first name, or null. |
-| `customer.last_name` | string\|null |  | everyone | Rider last name, or null. |
-| `customer.phone` | string\|null |  | owner, admin, self | Rider phone (E.164), or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
-| `customer.email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
-| `customer.first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
-| `customer.last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
-| `recent_bookings` | array |  | everyone | Up to 20 of the rider's bookings with this fleet or driver, newest first. |
-| `recent_bookings[].booking_id` | string |  | everyone | Booking id for get_booking. |
-| `recent_bookings[].status` | enum |  | everyone | Booking status. Values: `pending`, `confirmed`, `in_progress`, `completed`, `canceled`, `pending_payment`. |
-| `recent_bookings[].scheduled_time` | string\|null | ISO 8601 | everyone | ISO 8601 timestamp with offset, or null when not (yet) known. |
-## CustomerWrite
-
-Preview or result of create_customer / update_customer: the customer as the Customers page lists them (null in a preview of a customer Meter does not know yet).
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
-| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
-| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
-| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
-| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
-| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
-| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
-| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
-| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
-| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
-| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
-| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
-| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
-| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
-| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
-| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
-| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
-| `customer` | object\|null |  | everyone | A rider who has booked with the fleet (or with a solo driver). Contact fields follow the web console's customer list. |
-| `customer.rider_id` | string |  | everyone | Rider id for get_customer, update_booking or quotes. |
-| `customer.first_name` | string\|null |  | everyone | Rider first name, or null. |
-| `customer.last_name` | string\|null |  | everyone | Rider last name, or null. |
-| `customer.phone` | string\|null |  | owner, admin, self | Rider phone (E.164), or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
-| `customer.email` | string\|null |  | owner, admin, self | Rider email, or null. Only fleet owners/admins and the solo driver who serves the rider see it. |
-| `customer.first_seen_at` | string | ISO 8601 | everyone | When the rider first booked with this fleet or driver. |
-| `customer.last_booking_at` | string\|null | ISO 8601 | everyone | When the rider last booked, or null. |
-## CustomerImport
-
-A customer import: what each row would do (preview) or did (applied).
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `fleet_id` | string\|null |  | everyone | Fleet the customers belong to, or null for a solo driver's own customers. |
-| `totals` | object |  | everyone | Row counts by status. |
-| `totals.rows` | number |  | everyone | Rows received. |
-| `totals.create` | number |  | everyone | New riders. |
-| `totals.add_existing` | number |  | everyone | Existing Meter riders added as customers. |
-| `totals.update_name` | number |  | everyone | Existing customers whose missing name is filled. |
-| `totals.unchanged` | number |  | everyone | Already customers with nothing to change. |
-| `totals.duplicate` | number |  | everyone | Rows repeating an earlier phone or email. |
-| `totals.invalid` | number |  | everyone | Rows skipped. |
-| `totals.failed` | number |  | everyone | Rows that could not be written (0 in a preview). |
-| `rows` | array |  | everyone | Every row with its status, in request order. |
-| `rows[].row` | number |  | everyone | 1-based position of the row in the request (CSV rows count from the first line after the header). |
-| `rows[].status` | enum |  | everyone | create: a new Meter rider is created and added; add_existing: a rider Meter already knows is added to your customers; update_name: an existing customer gets the missing first/last name; unchanged: already a customer, nothing to do; duplicate: same phone or email as an earlier row, skipped; invalid: skipped, see reason; failed: the row could not be written, see reason. Values: `create`, `add_existing`, `update_name`, `unchanged`, `duplicate`, `invalid`, `failed`. |
-| `rows[].reason` | string\|null |  | everyone | Why the row is invalid, a duplicate or failed; null otherwise. |
-| `rows[].rider_id` | string\|null |  | everyone | Customer id once known (existing riders in a preview, every written row after confirming); null otherwise. |
-| `rows[].first_name` | string\|null |  | everyone | First name from the row, or null. |
-| `rows[].last_name` | string\|null |  | everyone | Last name from the row, or null. |
-| `rows[].phone` | string\|null |  | owner, admin, self | Phone normalized to E.164, or null. |
-| `rows[].email` | string\|null |  | owner, admin, self | Email from the row (lower-case), or null. Used only to find a rider Meter already knows. |
-## CustomerImportWrite
-
-Preview or result of import_customers.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `status` | string (optional) |  | everyone | Saved-proposal outcome; absent on older servers. |
-| `proposal` | object\|null (optional) |  | everyone | Saved proposal and expiry. Confirm its exact changes before applying; absent on older servers. |
-| `proposal.id` | string |  | everyone | Opaque saved proposal id. |
-| `proposal.notes` | array (optional) |  | everyone | Warnings and consequences to show alongside the exact changes before confirmation; absent on older servers or when there are no notes. |
-| `proposal.notes[].code` | string |  | everyone | Stable warning or explanatory-note code. |
-| `proposal.notes[].text` | string |  | everyone | Human-readable consequence or context to show with the proposed changes. |
-| `proposal.status` | string |  | everyone | Current saved proposal state; unknown future states must be preserved. |
-| `proposal.risk` | enum |  | everyone | Effective risk after field-level escalation. Values: `low`, `standard`, `sensitive`. |
-| `proposal.expires_at` | string |  | everyone | Time after which this proposal can no longer be applied. |
-| `proposal.applied_at` | string\|null (optional) |  | everyone | Time the proposal was applied, if it was applied. |
-| `proposal.replayed` | boolean (optional) |  | everyone | True when returning a stored result without applying again. |
-| `applied` | boolean |  | everyone | True when the change was written. False on a dry run or when nothing differed from the current values. |
-| `dry_run` | boolean |  | everyone | True when the call was a preview: values were validated and authorized but nothing was written. |
-| `changes` | array |  | everyone | Field-level changes (empty when every requested value already matched). Summarize these back to the human. |
-| `changes[].field` | string |  | everyone | Name of the changed argument, exactly as passed to the tool (e.g. "contact_phone", "fare.base"). |
-| `changes[].from` | string\|number\|boolean\|null\|array\|array |  | everyone | Value before the change. |
-| `changes[].to` | string\|number\|boolean\|null\|array\|array |  | everyone | Value after the change. |
-| `import` | object |  | everyone | A customer import: what each row would do (preview) or did (applied). |
-| `import.fleet_id` | string\|null |  | everyone | Fleet the customers belong to, or null for a solo driver's own customers. |
-| `import.totals` | object |  | everyone | Row counts by status. |
-| `import.totals.rows` | number |  | everyone | Rows received. |
-| `import.totals.create` | number |  | everyone | New riders. |
-| `import.totals.add_existing` | number |  | everyone | Existing Meter riders added as customers. |
-| `import.totals.update_name` | number |  | everyone | Existing customers whose missing name is filled. |
-| `import.totals.unchanged` | number |  | everyone | Already customers with nothing to change. |
-| `import.totals.duplicate` | number |  | everyone | Rows repeating an earlier phone or email. |
-| `import.totals.invalid` | number |  | everyone | Rows skipped. |
-| `import.totals.failed` | number |  | everyone | Rows that could not be written (0 in a preview). |
-| `import.rows` | array |  | everyone | Every row with its status, in request order. |
-| `import.rows[].row` | number |  | everyone | 1-based position of the row in the request (CSV rows count from the first line after the header). |
-| `import.rows[].status` | enum |  | everyone | create: a new Meter rider is created and added; add_existing: a rider Meter already knows is added to your customers; update_name: an existing customer gets the missing first/last name; unchanged: already a customer, nothing to do; duplicate: same phone or email as an earlier row, skipped; invalid: skipped, see reason; failed: the row could not be written, see reason. Values: `create`, `add_existing`, `update_name`, `unchanged`, `duplicate`, `invalid`, `failed`. |
-| `import.rows[].reason` | string\|null |  | everyone | Why the row is invalid, a duplicate or failed; null otherwise. |
-| `import.rows[].rider_id` | string\|null |  | everyone | Customer id once known (existing riders in a preview, every written row after confirming); null otherwise. |
-| `import.rows[].first_name` | string\|null |  | everyone | First name from the row, or null. |
-| `import.rows[].last_name` | string\|null |  | everyone | Last name from the row, or null. |
-| `import.rows[].phone` | string\|null |  | owner, admin, self | Phone normalized to E.164, or null. |
-| `import.rows[].email` | string\|null |  | owner, admin, self | Email from the row (lower-case), or null. Used only to find a rider Meter already knows. |
-## OperatorBooking
-
-A booking an operator creates for a customer: preview, or the created booking.
-
-| Field | Type | Unit | Visible to | Description |
-| --- | --- | --- | --- | --- |
-| `booking_id` | string\|null |  | everyone | Created booking id for get_booking; null in a preview. |
-| `status` | enum\|null |  | everyone | Booking status after creation; null in a preview. Values: `pending`, `confirmed`, `in_progress`, `completed`, `canceled`, `pending_payment`. |
-| `fleet_id` | string |  | everyone | Fleet taking the booking. |
-| `fleet_name` | string\|null |  | everyone | Fleet display name. |
-| `customer` | object |  | everyone | Who rides. |
-| `customer.rider_id` | string\|null |  | everyone | Customer id; null in a preview of a customer Meter does not know yet. |
-| `customer.first_name` | string\|null |  | everyone | First name, or null. |
-| `customer.last_name` | string\|null |  | everyone | Last name, or null. |
-| `customer.phone` | string\|null |  | owner, admin, self | Phone (E.164), or null. |
-| `customer.email` | string\|null |  | owner, admin, self | Email, or null. |
-| `customer.is_new` | boolean |  | everyone | True when confirming creates this customer (a new Meter rider or a rider new to your customers). |
-| `pickup` | object |  | everyone | Pickup. |
-| `pickup.name` | string\|null |  | everyone | Place name, or null. |
-| `pickup.address` | string\|null |  | everyone | Formatted address, or null. |
-| `dropoff` | object\|null |  | everyone | Drop-off, or null for a metered ride without one. |
-| `dropoff.name` | string\|null |  | everyone | Place name, or null. |
-| `dropoff.address` | string\|null |  | everyone | Formatted address, or null. |
-| `stops` | array |  | everyone | Intermediate stops in order. |
-| `stops[].name` | string\|null |  | everyone | Place name, or null. |
-| `stops[].address` | string\|null |  | everyone | Formatted address, or null. |
-| `pickup_time` | string\|null | ISO 8601 | everyone | Pickup time (ISO 8601 with offset), or null for as soon as possible. |
-| `timezone` | string\|null |  | everyone | IANA timezone of the pickup. |
-| `passengers` | number |  | everyone | Passenger count. |
-| `ride_option` | object |  | everyone | Ride option booked. |
-| `ride_option.ride_option_id` | string |  | everyone | Ride option id. |
-| `ride_option.name` | string |  | everyone | Ride option name. |
-| `ride_option.capacity` | number\|null |  | everyone | Maximum passengers, or null. |
-| `price` | object |  | everyone | Quoted fare the customer pays. |
-| `price.amount_minor` | number | minor currency units | everyone | Price the rider is quoted, in minor units. |
-| `price.currency` | string |  | everyone | ISO 4217 currency code, upper-case. |
-| `price.display` | string |  | everyone | Price formatted for the human in the request locale. |
-| `price.mode` | enum |  | everyone | fixed: the quoted price is the fare; estimate: the final fare can change (for example overtime); metered: charged by the meter, the amount is an estimate. Values: `fixed`, `estimate`, `metered`. |
-| `price.disclosure` | string\|null |  | everyone | Pricing disclosure to show the human before confirming, or null. |
-| `payment` | enum |  | everyone | after_trip: nothing is charged at booking; the customer pays the driver after the ride (cash, card in person or an invoice). For upfront payment through a Meter link use create_quote then send_quote instead. Values: `after_trip`. |
-| `cancellation_policy` | object |  | everyone | Cancellation policy that applies to the customer. |
-| `cancellation_policy.grace_period_seconds` | number | seconds | everyone | Free cancellation window after booking. |
-| `cancellation_policy.fee_minor` | number\|null | minor currency units | everyone | Fee for cancelling after the free window, in minor units; null when unknown or none. |
-| `cancellation_policy.currency` | string\|null |  | everyone | Currency of the fee, or null. |
-| `cancellation_policy.summary` | string |  | everyone | One-sentence policy summary for the human. |
-| `notes` | string\|null |  | everyone | Notes for the driver, or null. |
-| `flight_number` | string\|null |  | everyone | Flight number, or null. |
-| `driver_id` | string\|null |  | everyone | Driver requested for the booking, or null for the fleet's dispatch to pick one. |
-| `driver_assignment` | enum |  | everyone | none: no driver chosen. requested: a preview that assigns driver_id on confirm. assigned: the driver has the booking. failed: the booking exists but the assignment was refused; use assign_booking. Values: `none`, `requested`, `assigned`, `failed`. |
-| `customer_notifications` | array |  | everyone | How the customer is told about the booking (confirmation with a tracking link). Empty when Meter has no phone or email for them. |

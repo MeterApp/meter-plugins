@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.5 (2026-11-11)
+
+Released alongside the Drivers & Fleets settings update.
+
 ## 2.0.4 (2026-11-10)
 
 Released alongside the fleet settings update.
